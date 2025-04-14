@@ -1,4 +1,4 @@
-# nvimpp, tmuxpp, termpp – dein Terminal, dein Code, dein Stil
+# nvim++, tmux++, term++ – dein Terminal, dein Code, dein Stil
 
 Hallo, ich bin **vhstack** 👋
 
@@ -11,17 +11,17 @@ und mit Fokus auf den täglichen Workflow.
 
 ## 🔧 Meine Projekte
 
-### [nvimpp](https://github.com/vhstack/nvimpp)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvim++](https://github.com/vhstack/nvimpp)
 **Dein Neovim-Setup:**  
 Ein schnelles, modulares und produktivitätsorientiertes Setup, das Nvim in ein modernes, 
 flexibles Entwicklungstool verwandelt.
 
-### [tmuxpp](https://github.com/vhstack/tmuxpp)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmux++](https://github.com/vhstack/tmuxpp)
 **Terminal-Sessions, perfekt organisiert:**  
 Optimierte Keybindings und smarte Integrationen, die deine Terminal-Sitzungen effizienter 
 und organisierter gestalten.
 
-### [termpp](https://github.com/vhstack/termpp)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [term++](https://github.com/vhstack/termpp)
 **Individualisiertes Terminal-Setup:**  
 Ein maßgeschneidertes Setup, das Farben, Fonts und Tools perfekt kombiniert, 
 um dein Terminal-Erlebnis zu personalisieren.
