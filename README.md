@@ -11,7 +11,7 @@ und mit Fokus auf den täglichen Workflow.
 
 ## 🔧 Meine Projekte
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvim++](https://github.com/vhstack/nvimpp)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvim✚✚](https://github.com/vhstack/nvimpp)
 **Dein Neovim-Setup:**  
 Ein schnelles, modulares und produktivitätsorientiertes Setup, das Nvim in ein modernes, 
 flexibles Entwicklungstool verwandelt.
