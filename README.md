@@ -26,7 +26,7 @@ und organisierter gestalten.
 Ein maßgeschneidertes Setup, das Farben, Fonts und Tools perfekt kombiniert, 
 um dein Terminal-Erlebnis zu personalisieren.
 
-## 🌱 Über mich
+## ✨ Über mich
 
 Ich war sehr lange Zeit in der Linux-Entwicklung tätig und weiß, wie wichtig eine gut konfigurierte Entwicklungsumgebung ist.
 Mit diesen Projekten möchte ich anderen helfen, die Arbeit am Terminal so angenehm und produktiv wie möglich zu gestalten.
