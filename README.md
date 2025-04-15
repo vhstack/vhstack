@@ -28,8 +28,9 @@ um dein Terminal-Erlebnis zu personalisieren.
 
 ## ✨ Über mich
 
-Ich war sehr lange Zeit in der Linux-Entwicklung tätig und weiß, wie wichtig eine gut konfigurierte Entwicklungsumgebung ist.
-Mit diesen Projekten möchte ich anderen helfen, die Arbeit am Terminal so angenehm und produktiv wie möglich zu gestalten.
+Ich verbringe seit Jahren mehr Zeit im Terminal als auf Social Media – und habe dabei gelernt, dass gute Software-Entwicklung mit einer richtig 
+eingerichteten Umgebung beginnt. Mit diesen Projekten möchte ich anderen helfen, effizient und mit Freude im Terminal zu arbeiten – sei es in der Shell 
+oder in Tools wie NeoVim.
 
 ---
 
