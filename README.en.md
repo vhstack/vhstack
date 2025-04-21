@@ -20,7 +20,7 @@ with a focus on your daily workflow.
 A fast, modular, productivity-oriented configuration that transforms NeoVim into a modern, flexible development tool.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
-**Terminal sessions, perfectly organized:**  
+**Terminal sessions with Tmux, perfectly organized:**  
 Optimized keybindings and smart integrations that make your terminal sessions more efficient and well-structured.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp)
