@@ -21,7 +21,7 @@ Ein schnelles, modulares und produktivitätsorientiertes Setup, das Nvim in ein 
 flexibles Entwicklungstool verwandelt.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
-**Terminal-Sessions, perfekt organisiert:**  
+**Terminal-Sessions mit Tmux, perfekt organisiert:**  
 Optimierte Keybindings und smarte Integrationen, die deine Terminal-Sitzungen effizienter 
 und organisierter gestalten.
 
