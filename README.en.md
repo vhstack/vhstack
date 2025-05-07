@@ -1,5 +1,7 @@
 <p align="right">
-  <a href="README.md"><img src="https://flagcdn.com/16x12/de.png" alt="Deutsch" title="Zur deutschen Version wechseln" /></a>  <a href="README.en.md"><img src="https://flagcdn.com/16x12/gb.png" alt="English" title="Switch to English" /></a>
+  <a href="README.md"><img src="https://flagcdn.com/16x12/de.png" alt="Deutsch" title="Zur deutschen Version wechseln" /></a>  
+  <a href="README.en.md"><img src="https://flagcdn.com/16x12/gb.png" alt="English" title="Switch to English" /></a>  
+  <a href="README.ru.md"><img src="https://flagcdn.com/16x12/ru.png" alt="Русский" title="Переключиться на русскую версию" /></a>
 </p>
 
 # nvimpp, tmuxpp, termpp – your terminal, your code, your style
@@ -15,15 +17,15 @@ with a focus on your daily workflow.
 
 ## 🔧 My Projects
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp/README.en.md)
 **Your Neovim setup:**  
 A fast, modular, productivity-oriented configuration that transforms NeoVim into a modern, flexible development tool.
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp/README.en.md)
 **Terminal sessions with Tmux, perfectly organized:**  
 Optimized keybindings and smart integrations that make your terminal sessions more efficient and well-structured.
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp/README.en.md)
 **Personalized terminal environment:**  
 A tailor-made setup that combines colors, fonts, and tools seamlessly to customize your terminal experience to your liking.
 
