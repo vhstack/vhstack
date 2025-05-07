@@ -17,15 +17,15 @@ with a focus on your daily workflow.
 
 ## 🔧 My Projects
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp/README.en.md)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
 **Your Neovim setup:**  
 A fast, modular, productivity-oriented configuration that transforms NeoVim into a modern, flexible development tool.
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp/README.en.md)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
 **Terminal sessions with Tmux, perfectly organized:**  
 Optimized keybindings and smart integrations that make your terminal sessions more efficient and well-structured.
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp/README.en.md)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp)
 **Personalized terminal environment:**  
 A tailor-made setup that combines colors, fonts, and tools seamlessly to customize your terminal experience to your liking.
 

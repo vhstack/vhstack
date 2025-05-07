@@ -17,17 +17,17 @@
 
 ## 🔧 Мои проекты
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp/README.ru.md)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
 **Твой сетап для Neovim:**  
 Быстрый, модульный и ориентированный на продуктивность, он превращает Nvim в современный, 
 гибкий инструмент разработки.
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp/README.ru.md)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
 **Сессии терминала с Tmux, идеально организованные:**  
 Оптимизированные сочетания клавиш и умные интеграции, которые делают твои терминальные сессии более 
 эффективными и упорядоченными.
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp/README.ru.md)
+### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp)
 **Персонализированный терминальный сетап:**  
 Индивидуальный набор, который идеально сочетает цвета, шрифты и инструменты, 
 чтобы персонализировать твой опыт работы в терминале.
