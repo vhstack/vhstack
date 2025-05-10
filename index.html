@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vhstack // Terminal Projects</title>
+  <link rel="icon" href="https://github.com/vhstack.png">
+  <style>
+    /* Catppuccin Mocha Palette */
+    :root {
+      --bg: #1e1e2e;
+      --mantle: #181825;
+      --crust: #11111b;
+      --text: #cad3f5;
+      --subtext: #b8c0e0;
+      --overlay: #313244;
+      --surface0: #2a273f;
+      --surface1: #393552;
+      --peach: #f5a97f;
+      --blue: #8aadf4;
+      --green: #a6e3a1;
+      --red: #f38ba8;
+    }
+    /* Base Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--bg);
+    }
+    a { text-decoration: none; color: var(--peach); }
+    a:hover { text-decoration: underline; }
+    img { display: block; max-width: 100%; }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid var(--overlay);
+      margin: 0 auto 1rem;
+    }
+    .avatar img { width: 100%; height: auto; }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    p.lead {
+      font-size: 1.125rem;
+      color: var(--subtext);
+      max-width: 700px;
+      margin: 0.5rem auto 0;
+    }
+
+    /* Projects Section */
+    .projects h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: var(--text);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: var(--surface0);
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      padding: 1.5rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+    }
+    .card-icon {
+      width: 24px;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+      filter: invert(100%);
+    }
+    .card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      color: var(--text);
+    }
+    .card p {
+      color: var(--subtext);
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 4rem;
+      font-size: 0.875rem;
+      color: var(--subtext);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="https://github.com/vhstack" target="_blank" rel="noopener">
+      <div class="avatar">
+        <img src="https://github.com/vhstack.png" alt="vhstack profile picture">
+      </div>
+    </a>
+      <h1>vhstack</h1>
+      <p class="lead">Optimizing your terminal experience, workflow, and style with thoughtfully integrated tools.</p>
+    </header>
+
+    <section class="projects">
+      <h2>🖥️ Mastering Terminal Workflows</h2>
+      <div class="grid">
+
+        <article class="card">
+          <h3><img src="assets/vhstack.png" alt="icon" class="card-icon"/> <a href="https://github.com/vhstack/nvimpp" target="_blank" rel="noopener">nvimpp</a></h3>
+          <p><strong>Your Neovim setup:</strong> A fast, modular, productivity-oriented configuration that transforms NeoVim into a modern, flexible development tool.</p>
+        </article>
+
+        <article class="card">
+          <h3><img src="assets/vhstack.png" alt="icon" class="card-icon"/> <a href="https://github.com/vhstack/tmuxpp" target="_blank" rel="noopener">tmuxpp</a></h3>
+          <p><strong>Terminal sessions with Tmux, perfectly organized:</strong> Optimized keybindings and smart integrations that make your terminal sessions more efficient and well-structured.</p>
+        </article>
+
+        <article class="card">
+          <h3><img src="assets/vhstack.png" alt="icon" class="card-icon"/> <a href="https://github.com/vhstack/termpp" target="_blank" rel="noopener">termpp</a></h3>
+          <p><strong>Personalized terminal environment:</strong> A tailor-made setup that combines colors, fonts, and tools seamlessly to customize your terminal experience to your liking.</p>
+        </article>
+
+      </div>
+    </section>
+
+    <footer>
+      <p>&ldquo;The code we write is an expression of ourselves—make it as individual as you are.&rdquo;</p>
+    </footer>
+  </div>
+</body>
+</html>
