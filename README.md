@@ -19,7 +19,7 @@ und mit Fokus auf den täglichen Workflow.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
 **Dein Neovim-Setup:**  
-Ein schnelles, modulares und produktivitätsorientiertes Setup, das Nvim in ein modernes, 
+Ein schnelles, modulares und produktivitätsorientiertes Setup, das Neovim in ein modernes, 
 flexibles Entwicklungstool verwandelt.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
@@ -36,7 +36,7 @@ um dein Terminal-Erlebnis zu personalisieren.
 
 Ich verbringe seit Jahren mehr Zeit im Terminal als auf Social Media – und habe dabei gelernt, dass gute Software-Entwicklung mit einer richtig 
 eingerichteten Umgebung beginnt. Mit diesen Projekten möchte ich anderen helfen, effizient und mit Freude im Terminal zu arbeiten – sei es in der Shell 
-oder in Tools wie NeoVim.
+oder in Tools wie Neovim.
 
 ---
 

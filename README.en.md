@@ -19,7 +19,7 @@ with a focus on your daily workflow.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
 **Your Neovim setup:**  
-A fast, modular, productivity-oriented configuration that transforms NeoVim into a modern, flexible development tool.
+A fast, modular, productivity-oriented configuration that transforms Neovim into a modern, flexible development tool.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
 **Terminal sessions with Tmux, perfectly organized:**  
@@ -33,7 +33,7 @@ A tailor-made setup that combines colors, fonts, and tools seamlessly to customi
 
 I've spent more time in the terminal than on social media over the years—and I've learned that good software development starts with 
 a well-configured environment. With these projects, I aim to help others work efficiently and enjoyably in the terminal, whether 
-in the shell or in tools like NeoVim.
+in the shell or in tools like Neovim.
 
 ---
 
