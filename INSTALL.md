@@ -52,3 +52,31 @@ brew install tmux neovim ripgrep llvm         # macOS
 > **Tipp:** Danach eine neue Shell starten (oder `source ~/.bashrc`) und `tmux`
 > sowie `nvim` einmal öffnen. In Neovim bei Bedarf
 > `:MasonInstall clangd cmake-language-server` für den C/C++-LSP ausführen.
+
+## Installierte Pfade
+
+| Komponente | Pfade |
+| --- | --- |
+| Prompt | `~/.config/ohmyposh/vhstack.omp.json`, Init-Zeilen in `~/.bashrc`/`~/.zshrc`, bei Bedarf `~/.local/bin/oh-my-posh` |
+| Tmux | `~/.tmux/`, Symlink `~/.tmux.conf` |
+| Zwischenablage (nur WSL) | `%LOCALAPPDATA%\win32yank`, Symlink im PATH, `~/.cache/tmuxpp/` |
+| Neovim | `~/.config/nvim/`, Plugin-Daten unter `~/.local/share/nvim`, `~/.local/state/nvim`, `~/.cache/nvim` |
+| Werkzeuge | `~/.local/bin/xssh`, `~/.local/bin/update-vhstack` |
+
+`install.sh` ist idempotent: Ein erneuter Lauf aktualisiert die Installation, Bestehendes wandert vorher in ein neues Backup-Verzeichnis.
+
+## Deinstallation
+
+Ein Befehl entfernt alle oben genannten Komponenten wieder ([`uninstall.sh`](./uninstall.sh)):
+
+```bash
+curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/uninstall.sh | bash
+```
+
+Das Skript zeigt zuerst, was es gefunden hat, und fragt nach Bestätigung (ohne Rückfrage: `... | bash -s -- --yes`). Die Backup-Verzeichnisse `~/.vhstack-backup-*` bleiben liegen — dort liegt der Stand von vor der Installation und lässt sich bei Bedarf von Hand zurückkopieren:
+
+```bash
+cp -a ~/.vhstack-backup-<Zeitstempel>/.tmux ~/
+```
+
+Das Programm `oh-my-posh` selbst bleibt installiert (`~/.local/bin/oh-my-posh`) — bei Bedarf von Hand löschen.

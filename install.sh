@@ -18,6 +18,10 @@
 #
 #   curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash
 #
+# Remove everything later with uninstall.sh (backups are kept):
+#
+#   curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/uninstall.sh | bash
+#
 # Requirements: git, curl — tmux and nvim should be installed, e.g.:
 #
 #   sudo apt install tmux neovim ripgrep clangd   # Debian/Ubuntu
