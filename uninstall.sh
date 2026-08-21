@@ -23,6 +23,8 @@
 
 set -euo pipefail
 
+# shellcheck disable=SC2088  # Tilden in Meldungstexten sind reine Anzeige (~/...), keine Pfade
+
 # Alles in main(): bash parst so das komplette Skript, bevor der erste
 # Befehl laeuft — bei 'curl | bash' darf kein Kindprozess den restlichen
 # Skripttext von stdin verschlucken (siehe install.sh).
@@ -40,6 +42,7 @@ main() {
 
   # --- Ausgabe: feste Label-Spalte, Status dezent farbig (nur am Terminal).
   # Unterbefehle schreiben in ein Log, das nur bei Problemen gezeigt wird.
+  # shellcheck disable=SC2034  # RED gehoert zur gemeinsamen Palette der drei Skripte
   if [ -t 1 ]; then
     BLD=$'\033[1m'; DIM=$'\033[2m'; GRN=$'\033[32m'; YEL=$'\033[33m'
     RED=$'\033[31m'; RST=$'\033[0m'
@@ -251,10 +254,13 @@ main() {
   # --- Summary --------------------------------------------------------------------
 
   printf '\n%sdone.%s vhstack environment removed; start a new shell session.\n' "$BLD" "$RST"
-  if ls -d "$HOME"/.vhstack-backup-* >/dev/null 2>&1; then
+  backups=("$HOME"/.vhstack-backup-*)
+  if [ -e "${backups[0]}" ]; then
     echo
     echo "backups were kept — they hold your configurations from before the installation:"
-    ls -d "$HOME"/.vhstack-backup-* | sed "s|^$HOME|~|;s/^/  /"
+    for b in "${backups[@]}"; do
+      printf '  %s\n' "${b/#$HOME/\~}"
+    done
     echo "restore by hand if needed, e.g.:  cp -a <backup>/.tmux ~/"
   fi
 }

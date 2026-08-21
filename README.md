@@ -6,6 +6,8 @@
 
 # nvimpp, tmuxpp, termpp – dein Terminal, dein Code, dein Stil
 
+[![CI](https://github.com/vhstack/vhstack/actions/workflows/ci.yml/badge.svg)](https://github.com/vhstack/vhstack/actions/workflows/ci.yml)
+
 Hallo, ich bin **vhstack** 👋
 
 Willkommen auf meinem GitHub-Profil!  

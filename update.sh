@@ -24,6 +24,8 @@
 
 set -euo pipefail
 
+# shellcheck disable=SC2088  # Tilden in Meldungstexten sind reine Anzeige (~/...), keine Pfade
+
 # Alles in main(): bash parst so das komplette Skript, bevor der erste
 # Befehl laeuft. Bei 'curl | bash' kann sonst ein Kindprozess, der stdin
 # liest (etwa cmd.exe/win32yank.exe ueber die WSL-Interop), den restlichen

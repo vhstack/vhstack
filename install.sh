@@ -32,6 +32,8 @@
 
 set -euo pipefail
 
+# shellcheck disable=SC2088  # Tilden in Meldungstexten sind reine Anzeige (~/...), keine Pfade
+
 # Alles in main(): bash parst so das komplette Skript, bevor der erste
 # Befehl laeuft. Bei 'curl | bash' kann sonst ein Kindprozess, der stdin
 # liest (etwa cmd.exe/win32yank.exe ueber die WSL-Interop), den restlichen
@@ -132,6 +134,7 @@ main() {
     {
       echo ""
       echo "# oh-my-posh vhstack/termpp theme"
+      # shellcheck disable=SC2016  # $(...) soll woertlich in die rc-Datei
       echo 'eval "$('"$HOME"'/.local/bin/oh-my-posh init '"$SHELL_NAME"' --config ~/.config/ohmyposh/vhstack.omp.json)"'
     } >> "$RC_FILE"
     ok "theme installed; init line added to ${RC_FILE/#$HOME/\~}"
