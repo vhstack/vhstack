@@ -38,10 +38,22 @@ main() {
   BACKUP_DIR="$HOME/.vhstack-backup-uninstall-$(date +%Y%m%d-%H%M%S)"
   POINTER="${XDG_CACHE_HOME:-$HOME/.cache}/tmuxpp/win32yank.path"
 
-  info()  { echo "ℹ️  $*"; }
-  ok()    { echo "✅ $*"; }
-  warn()  { echo "⚠️  $*"; }
-  step()  { echo; echo "==> $*"; }
+  # --- Ausgabe: feste Label-Spalte, Status dezent farbig (nur am Terminal).
+  # Unterbefehle schreiben in ein Log, das nur bei Problemen gezeigt wird.
+  if [ -t 1 ]; then
+    BLD=$'\033[1m'; DIM=$'\033[2m'; GRN=$'\033[32m'; YEL=$'\033[33m'
+    RED=$'\033[31m'; RST=$'\033[0m'
+  else
+    BLD=""; DIM=""; GRN=""; YEL=""; RED=""; RST=""
+  fi
+  LOG=$(mktemp)
+  trap 'rm -f "$LOG"' EXIT
+
+  label()   { : >"$LOG"; printf '  %-10s ' "$1"; }
+  ok()      { printf '%sok%s      %s\n' "$GRN" "$RST" "$1"; }
+  warn()    { printf '%swarn%s    %s\n' "$YEL" "$RST" "$1"; }
+  showlog() { if [ -s "$LOG" ]; then sed "s/^/          $DIM/;s/\$/$RST/" "$LOG"; fi; }
+  note()    { printf '  %-10s %s\n' "$1" "$2"; }
 
   is_wsl() {
     [ -n "${WSL_DISTRO_NAME:-}" ] && return 0
@@ -53,14 +65,15 @@ main() {
       "^# (vhstack: true color support|oh-my-posh vhstack/termpp theme)$" "$1"
   }
 
-  # --- What is installed? -----------------------------------------------------
+  printf '%svhstack uninstall%s  %s·  vhstack.github.io%s\n\n' "$BLD" "$RST" "$DIM" "$RST"
 
-  step "Looking for vhstack components"
+  # --- What is installed? -----------------------------------------------------
 
   found=no
   have_tmux=no; have_wy=no; have_nvim=no; have_theme=no; have_rc=no
   have_xssh=no; have_update=no
 
+  echo "found components:"
   if [ -e "$HOME/.tmux/clipboard.sh" ] || [ -L "$HOME/.tmux.conf" ]; then
     have_tmux=yes; found=yes
     echo "  - Tmux configuration (~/.tmux, ~/.tmux.conf)"
@@ -75,7 +88,7 @@ main() {
   fi
   if [ -e "$HOME/.config/ohmyposh/vhstack.omp.json" ]; then
     have_theme=yes; found=yes
-    echo "  - Prompt theme (~/.config/ohmyposh/vhstack.omp.json)"
+    echo "  - prompt theme (~/.config/ohmyposh/vhstack.omp.json)"
   fi
   for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
     if rc_has_markers "$rc"; then
@@ -95,7 +108,7 @@ main() {
   fi
 
   if [ "$found" = no ]; then
-    ok "Nothing to do — no vhstack installation found."
+    printf '  %s(none)%s\n\nnothing to do — no vhstack installation found.\n' "$DIM" "$RST"
     exit 0
   fi
 
@@ -108,16 +121,16 @@ main() {
   echo
   if [ "$assumeyes" != yes ]; then
     if { : </dev/tty; } 2>/dev/null; then
-      printf "Remove these components? Backups (~/.vhstack-backup-*) are kept. [y/N] " >/dev/tty
+      printf "remove these components? backups (~/.vhstack-backup-*) are kept. [y/N] " >/dev/tty
       IFS= read -r answer </dev/tty || answer=""
       case "$answer" in
-        y|Y|yes|j|J) ;;
-        *) echo "Aborted — nothing changed."; exit 0 ;;
+        y|Y|yes|j|J) echo ;;
+        *) echo "aborted — nothing changed."; exit 0 ;;
       esac
     else
-      warn "No terminal available for the confirmation prompt."
-      warn "Run non-interactively with:"
-      warn "  curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/uninstall.sh | bash -s -- --yes"
+      warn_msg="no terminal available for the confirmation prompt — run non-interactively with:"
+      printf '%swarn%s    %s\n' "$YEL" "$RST" "$warn_msg"
+      echo   "        curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/uninstall.sh | bash -s -- --yes"
       exit 1
     fi
   fi
@@ -125,28 +138,30 @@ main() {
   # --- 1. win32yank (must run BEFORE ~/.tmux disappears) ------------------------
 
   if [ "$have_wy" = yes ] || { is_wsl && [ -f "$HOME/.tmux/install_win32yank.sh" ]; }; then
-    step "Removing win32yank.exe"
+    label "clipboard"
     if [ -f "$HOME/.tmux/install_win32yank.sh" ]; then
-      sh "$HOME/.tmux/install_win32yank.sh" --remove </dev/null ||
-        warn "win32yank removal reported a problem — continuing."
+      if sh "$HOME/.tmux/install_win32yank.sh" --remove </dev/null >>"$LOG" 2>&1; then
+        ok "win32yank.exe removed"
+      else
+        warn "win32yank removal reported a problem — continuing"
+        showlog
+      fi
     elif [ -r "$POINTER" ]; then
       # ~/.tmux ist schon weg — Restbestaende anhand der Pfad-Datei aufraeumen.
       exe=$(cat "$POINTER" 2>/dev/null || true)
       case "$exe" in
-        */win32yank/win32yank.exe)
-          rm -rf "${exe%/win32yank.exe}"
-          info "Removed: ${exe%/win32yank.exe}"
-          ;;
+        */win32yank/win32yank.exe) rm -rf "${exe%/win32yank.exe}" ;;
       esac
       rm -f "$POINTER"
       for d in "$HOME/.local/bin" "$HOME/bin"; do
         f="$d/win32yank.exe"
         if [ -L "$f" ]; then
           case "$(readlink "$f" 2>/dev/null)" in
-            */win32yank/win32yank.exe) rm -f "$f"; info "Removed: $f" ;;
+            */win32yank/win32yank.exe) rm -f "$f" ;;
           esac
         fi
       done
+      ok "win32yank.exe leftovers removed"
     fi
     rmdir "$(dirname "$POINTER")" 2>/dev/null || true
   fi
@@ -154,44 +169,48 @@ main() {
   # --- 2. Tmux -------------------------------------------------------------------
 
   if [ "$have_tmux" = yes ]; then
-    step "Removing Tmux configuration"
+    label "tmux"
     if [ -e "$HOME/.tmux/.git" ]; then
-      warn "~/.tmux is a git repository — leaving it untouched (not an install.sh setup)."
-    elif [ -e "$HOME/.tmux/clipboard.sh" ]; then
-      rm -rf "$HOME/.tmux"
-      ok "Removed: ~/.tmux"
-    elif [ -d "$HOME/.tmux" ]; then
-      warn "~/.tmux does not look like a vhstack installation — leaving it untouched."
-    fi
-    if [ -L "$HOME/.tmux.conf" ] &&
-       [ "$(readlink "$HOME/.tmux.conf" 2>/dev/null)" = "$HOME/.tmux/tmux.conf" ]; then
-      rm -f "$HOME/.tmux.conf"
-      ok "Removed: ~/.tmux.conf (symlink)"
+      warn "~/.tmux is a git repository — left untouched (not an install.sh setup)"
+    elif [ -e "$HOME/.tmux/clipboard.sh" ] || [ ! -d "$HOME/.tmux" ]; then
+      removed=""
+      if [ -e "$HOME/.tmux/clipboard.sh" ]; then
+        rm -rf "$HOME/.tmux"
+        removed="~/.tmux"
+      fi
+      if [ -L "$HOME/.tmux.conf" ] &&
+         [ "$(readlink "$HOME/.tmux.conf" 2>/dev/null)" = "$HOME/.tmux/tmux.conf" ]; then
+        rm -f "$HOME/.tmux.conf"
+        removed="${removed:+$removed, }~/.tmux.conf"
+      fi
+      ok "removed: $removed"
+    else
+      warn "~/.tmux does not look like a vhstack installation — left untouched"
     fi
   fi
 
   # --- 3. Neovim -------------------------------------------------------------------
 
   if [ "$have_nvim" = yes ]; then
-    step "Removing Neovim configuration"
+    label "neovim"
     if [ -e "$HOME/.config/nvim/.git" ]; then
-      warn "~/.config/nvim is a git repository — leaving it untouched."
+      warn "~/.config/nvim is a git repository — left untouched"
     else
       rm -rf "$HOME/.config/nvim"
-      ok "Removed: ~/.config/nvim"
       rm -rf "$HOME/.local/share/nvim" "$HOME/.local/state/nvim" "$HOME/.cache/nvim"
-      ok "Removed: Neovim plugin data (~/.local/share, ~/.local/state, ~/.cache)"
+      ok "removed: ~/.config/nvim and plugin data"
     fi
   fi
 
   # --- 4. Prompt: theme and shell init lines ---------------------------------------
 
   if [ "$have_theme" = yes ] || [ "$have_rc" = yes ]; then
-    step "Removing prompt theme and shell init lines"
+    label "prompt"
+    parts=""
     if [ "$have_theme" = yes ]; then
       rm -f "$HOME/.config/ohmyposh/vhstack.omp.json"
       rmdir "$HOME/.config/ohmyposh" 2>/dev/null || true
-      ok "Removed: ~/.config/ohmyposh/vhstack.omp.json"
+      parts="theme removed"
     fi
     for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
       if rc_has_markers "$rc"; then
@@ -209,40 +228,35 @@ main() {
         ' "$rc" > "$tmp"
         cat "$tmp" > "$rc"   # cat statt mv: Rechte und Inode der rc-Datei bleiben
         rm -f "$tmp"
-        info "Cleaned $rc (copy saved to $BACKUP_DIR/$(basename "$rc"))"
+        parts="${parts:+$parts, }${rc/#$HOME/\~} cleaned"
       fi
     done
-    info "The oh-my-posh binary is kept (~/.local/bin/oh-my-posh) — delete it manually if unwanted."
+    ok "$parts"
+    note "" "${DIM}the oh-my-posh binary is kept (~/.local/bin/oh-my-posh) — delete it manually if unwanted${RST}"
   fi
 
   # --- 5. Helper commands ------------------------------------------------------------
 
-  if [ "$have_xssh" = yes ] || [ "$have_update" = yes ]; then
-    step "Removing helper commands"
-    if [ "$have_xssh" = yes ]; then
-      rm -f "$HOME/.local/bin/xssh"
-      ok "Removed: ~/.local/bin/xssh"
-    fi
-    if [ "$have_update" = yes ]; then
-      rm -f "$HOME/.local/bin/update-vhstack"
-      ok "Removed: ~/.local/bin/update-vhstack"
-    fi
+  if [ "$have_xssh" = yes ]; then
+    label "xssh"
+    rm -f "$HOME/.local/bin/xssh"
+    ok "removed: ~/.local/bin/xssh"
+  fi
+  if [ "$have_update" = yes ]; then
+    label "update"
+    rm -f "$HOME/.local/bin/update-vhstack"
+    ok "removed: ~/.local/bin/update-vhstack"
   fi
 
   # --- Summary --------------------------------------------------------------------
 
-  echo
-  echo "══════════════════════════════════════════════════════════════"
-  ok "vhstack environment removed."
+  printf '\n%sdone.%s vhstack environment removed; start a new shell session.\n' "$BLD" "$RST"
   if ls -d "$HOME"/.vhstack-backup-* >/dev/null 2>&1; then
     echo
-    echo "Backup directories were kept — they hold your configurations from"
-    echo "before the installation:"
-    ls -d "$HOME"/.vhstack-backup-* | sed 's/^/  /'
-    echo "Restore by hand if needed, e.g.:  cp -a <backup>/.tmux ~/"
+    echo "backups were kept — they hold your configurations from before the installation:"
+    ls -d "$HOME"/.vhstack-backup-* | sed "s|^$HOME|~|;s/^/  /"
+    echo "restore by hand if needed, e.g.:  cp -a <backup>/.tmux ~/"
   fi
-  echo
-  echo "Start a new shell session for a clean prompt."
 }
 
 main "$@"

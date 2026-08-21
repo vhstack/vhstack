@@ -30,14 +30,28 @@ set -euo pipefail
 # Skripttext verschlucken -- das Skript endet dann still mitten im Lauf.
 main() {
 
+  SECONDS=0
   BACKUP_DIR="$HOME/.vhstack-backup-update-$(date +%Y%m%d-%H%M%S)"
   TMP_DIR=$(mktemp -d)
   trap 'rm -rf "$TMP_DIR"' EXIT
 
-  info()  { echo "ℹ️  $*"; }
-  ok()    { echo "✅ $*"; }
-  warn()  { echo "⚠️  $*"; }
-  step()  { echo; echo "==> $*"; }
+  # --- Ausgabe: feste Label-Spalte, Status dezent farbig (nur am Terminal).
+  # Unterbefehle schreiben in ein Log, das nur im Fehlerfall gezeigt wird.
+  if [ -t 1 ]; then
+    BLD=$'\033[1m'; DIM=$'\033[2m'; GRN=$'\033[32m'; YEL=$'\033[33m'
+    RED=$'\033[31m'; RST=$'\033[0m'
+  else
+    BLD=""; DIM=""; GRN=""; YEL=""; RED=""; RST=""
+  fi
+  LOG="$TMP_DIR/log"
+
+  label()   { : >"$LOG"; printf '  %-10s ' "$1"; }
+  ok()      { printf '%sok%s      %s\n' "$GRN" "$RST" "$1"; }
+  warn()    { printf '%swarn%s    %s\n' "$YEL" "$RST" "$1"; }
+  skip()    { printf '%s--      %s%s\n' "$DIM" "$1" "$RST"; }
+  showlog() { if [ -s "$LOG" ]; then sed "s/^/          $DIM/;s/\$/$RST/" "$LOG"; fi; }
+  fail()    { printf '%sfail%s    %s\n' "$RED" "$RST" "$1"; showlog; exit 1; }
+  note()    { printf '  %-10s %s\n' "$1" "$2"; }
 
   # Download a file to the temp directory first and only replace the
   # target on success — a failed download must never clobber a working
@@ -45,67 +59,65 @@ main() {
   fetch() {
     local url="$1" dest="$2"
     local tmp="$TMP_DIR/fetch.$$"
-    if curl -fsSL "$url" -o "$tmp"; then
+    if curl -fsSL "$url" -o "$tmp" 2>>"$LOG"; then
       mv "$tmp" "$dest"
       return 0
     fi
     rm -f "$tmp"
-    warn "Download failed: $url — keeping the existing file."
     return 1
   }
 
   # Copy an existing file/directory into the backup directory, mirroring
-  # its path relative to $HOME (same layout as install.sh).
+  # its path relative to $HOME (same layout as install.sh); reported as a
+  # single line at the end.
   backup() {
     local path="$1"
     [ -e "$path" ] || [ -L "$path" ] || return 0
     local rel="${path#"$HOME"/}"
     mkdir -p "$BACKUP_DIR/$(dirname "$rel")"
     cp -a "$path" "$BACKUP_DIR/$rel"
-    info "Backed up $path -> $BACKUP_DIR/$rel"
   }
+
+  printf '%svhstack update%s  %s·  vhstack.github.io%s\n\n' "$BLD" "$RST" "$DIM" "$RST"
 
   # --- 0. Preconditions -------------------------------------------------------
 
-  step "Checking required tools"
-
   for tool in git curl; do
-    if ! command -v "$tool" &> /dev/null; then
-      echo "❌ '$tool' is required but not installed. Aborting."
+    command -v "$tool" &>/dev/null || {
+      printf '  %sfail%s    '\''%s'\'' is required but not installed.\n' "$RED" "$RST" "$tool"
       exit 1
-    fi
+    }
   done
 
   if [ ! -e "$HOME/.config/ohmyposh/vhstack.omp.json" ] \
      && [ ! -e "$HOME/.tmux/tmux.conf" ] \
      && [ ! -e "$HOME/.config/nvim/init.lua" ]; then
-    echo "❌ No vhstack installation found — run install.sh first:"
-    echo "   curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash"
+    printf '  %sfail%s    no vhstack installation found — run install.sh first:\n' "$RED" "$RST"
+    echo   "          curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash"
     exit 1
   fi
-  ok "Tool check done."
 
   # --- 1. Prompt theme (termpp) -------------------------------------------------
 
-  step "Updating Oh My Posh theme (vhstack/termpp)"
-
+  label "prompt"
   if [ -e "$HOME/.config/ohmyposh/vhstack.omp.json" ]; then
     backup "$HOME/.config/ohmyposh/vhstack.omp.json"
     if fetch https://raw.githubusercontent.com/vhstack/termpp/main/vhstack.omp.json \
          "$HOME/.config/ohmyposh/vhstack.omp.json"; then
-      ok "Theme updated: ~/.config/ohmyposh/vhstack.omp.json"
+      ok "theme updated"
+    else
+      warn "download failed — existing theme kept"
     fi
   else
-    warn "Theme not installed — skipping (run install.sh for a full setup)."
+    skip "not installed"
   fi
 
   # --- 2. Tmux configuration (tmuxpp) ------------------------------------------
 
-  step "Updating Tmux configuration (vhstack/tmuxpp)"
-
+  label "tmux"
   if [ -e "$HOME/.tmux/tmux.conf" ]; then
-    info "Fetching latest vhstack/tmuxpp ..."
-    git clone --depth 1 --quiet https://github.com/vhstack/tmuxpp.git "$TMP_DIR/tmuxpp"
+    git clone --depth 1 --quiet https://github.com/vhstack/tmuxpp.git "$TMP_DIR/tmuxpp" 2>>"$LOG" ||
+      fail "clone of vhstack/tmuxpp failed"
     rm -rf "$TMP_DIR/tmuxpp/.git" "$TMP_DIR/tmuxpp/assets" "$TMP_DIR/tmuxpp"/README*.md
 
     # Back up and replace the configuration files. ~/.tmux/plugins is kept —
@@ -124,57 +136,54 @@ main() {
       rm -f "$HOME/.tmux.conf"
       ln -s "$HOME/.tmux/tmux.conf" "$HOME/.tmux.conf"
     fi
-    ok "Tmux configuration updated: ~/.tmux (~/.tmux.conf)"
 
-    if command -v tmux &> /dev/null && [ -n "${TMUX:-}" ]; then
-      tmux source-file "$HOME/.tmux.conf" > /dev/null 2>&1 || true
-      info "Running tmux session reloaded."
+    if command -v tmux &>/dev/null && [ -n "${TMUX:-}" ]; then
+      tmux source-file "$HOME/.tmux.conf" >/dev/null 2>&1 || true
+      ok "~/.tmux updated, running session reloaded"
+    else
+      ok "~/.tmux updated"
     fi
   else
-    warn "Tmux configuration not installed — skipping."
+    skip "not installed"
   fi
 
   # --- 3. Neovim configuration (nvimpp) ----------------------------------------
 
-  step "Updating Neovim configuration (vhstack/nvimpp)"
-
+  label "neovim"
   if [ -e "$HOME/.config/nvim/init.lua" ]; then
-    info "Fetching latest vhstack/nvimpp ..."
-    git clone --depth 1 --quiet https://github.com/vhstack/nvimpp "$TMP_DIR/nvimpp"
+    git clone --depth 1 --quiet https://github.com/vhstack/nvimpp "$TMP_DIR/nvimpp" 2>>"$LOG" ||
+      fail "clone of vhstack/nvimpp failed"
     rm -rf "$TMP_DIR/nvimpp/.git" "$TMP_DIR/nvimpp/assets" "$TMP_DIR/nvimpp"/README*.md
 
     backup "$HOME/.config/nvim"
     rm -rf "$HOME/.config/nvim"
     cp -a "$TMP_DIR/nvimpp" "$HOME/.config/nvim"
-    ok "Neovim configuration updated: ~/.config/nvim"
 
-    if command -v nvim &> /dev/null; then
-      info "Synchronizing Neovim plugins (headless, this may take a moment) ..."
-      if nvim --headless "+Lazy! sync" +qa > /dev/null 2>&1; then
-        ok "Neovim plugins synchronized."
-      else
-        warn "Plugin sync failed — plugins will be updated on the next nvim start."
-      fi
+    if ! command -v nvim &>/dev/null; then
+      ok "~/.config/nvim updated (plugins update on next nvim start)"
+    elif nvim --headless "+Lazy! sync" +qa >>"$LOG" 2>&1; then
+      ok "~/.config/nvim updated, plugins synchronized"
     else
-      warn "nvim not found — plugins will be updated on the next nvim start."
+      ok "~/.config/nvim updated (plugin sync failed — plugins update on next start)"
     fi
   else
-    warn "Neovim configuration not installed — skipping."
+    skip "not installed"
   fi
 
   # --- 4. xssh script (termpp) ---------------------------------------------------
 
-  step "Updating xssh script (vhstack/termpp)"
-
+  label "xssh"
   if [ -e "$HOME/.local/bin/xssh" ]; then
     backup "$HOME/.local/bin/xssh"
     if fetch https://raw.githubusercontent.com/vhstack/termpp/main/xssh \
          "$HOME/.local/bin/xssh"; then
       chmod +x "$HOME/.local/bin/xssh"
-      ok "xssh updated: ~/.local/bin/xssh"
+      ok "~/.local/bin/xssh updated"
+    else
+      warn "download failed — existing xssh kept"
     fi
   else
-    warn "xssh not installed — skipping."
+    skip "not installed"
   fi
 
   # --- 5. Self-update ------------------------------------------------------------
@@ -190,18 +199,11 @@ main() {
 
   # --- Summary ------------------------------------------------------------------
 
-  echo
-  echo "══════════════════════════════════════════════════════════════"
-  ok "vhstack environment updated!"
   if [ -d "$BACKUP_DIR" ]; then
-    info "Previous configuration saved in: $BACKUP_DIR"
+    label "backup"
+    ok "${BACKUP_DIR/#$HOME/\~}"
   fi
-  echo
-  echo "Next steps:"
-  echo "  1. tmux: reload with Prefix + r (Prefix = Ctrl+A) or restart tmux"
-  echo "  2. nvim: plugins are already in sync — just keep working"
-  echo
-  echo "🚀 Happy hacking!"
+  printf '\n%sdone in %ss.%s tmux reloads with prefix + r (Ctrl+A), nvim plugins are in sync.\n' "$BLD" "$SECONDS" "$RST"
 }
 
 main "$@"

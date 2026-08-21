@@ -38,75 +38,83 @@ set -euo pipefail
 # Skripttext verschlucken -- das Skript endet dann still mitten im Lauf.
 main() {
 
+  SECONDS=0
   BACKUP_DIR="$HOME/.vhstack-backup-$(date +%Y%m%d-%H%M%S)"
 
-  info()  { echo "ℹ️  $*"; }
-  ok()    { echo "✅ $*"; }
-  warn()  { echo "⚠️  $*"; }
-  step()  { echo; echo "==> $*"; }
+  # --- Ausgabe: feste Label-Spalte, Status dezent farbig (nur am Terminal).
+  # Unterbefehle schreiben in ein Log, das nur im Fehlerfall gezeigt wird --
+  # die Installation selbst bleibt ruhig.
+  if [ -t 1 ]; then
+    BLD=$'\033[1m'; DIM=$'\033[2m'; GRN=$'\033[32m'; YEL=$'\033[33m'
+    RED=$'\033[31m'; RST=$'\033[0m'
+  else
+    BLD=""; DIM=""; GRN=""; YEL=""; RED=""; RST=""
+  fi
+  LOG=$(mktemp)
+  trap 'rm -f "$LOG"' EXIT
 
-  # Move an existing file/directory/symlink into the backup directory,
-  # mirroring its path relative to $HOME (avoids name collisions like
-  # ~/.config/nvim vs. ~/.local/share/nvim).
+  label()   { : >"$LOG"; printf '  %-10s ' "$1"; }
+  ok()      { printf '%sok%s      %s\n' "$GRN" "$RST" "$1"; }
+  warn()    { printf '%swarn%s    %s\n' "$YEL" "$RST" "$1"; }
+  showlog() { if [ -s "$LOG" ]; then sed "s/^/          $DIM/;s/\$/$RST/" "$LOG"; fi; }
+  fail()    { printf '%sfail%s    %s\n' "$RED" "$RST" "$1"; showlog; exit 1; }
+  note()    { printf '  %-10s %s\n' "$1" "$2"; }
+
+  # Vorhandenes still ins Backup verschieben (Pfad relativ zu $HOME
+  # gespiegelt); gemeldet wird das Backup am Ende in einer Zeile.
   backup() {
     local path="$1"
     [ -e "$path" ] || [ -L "$path" ] || return 0
     local rel="${path#"$HOME"/}"
     mkdir -p "$BACKUP_DIR/$(dirname "$rel")"
     mv "$path" "$BACKUP_DIR/$rel"
-    info "Backed up $path -> $BACKUP_DIR/$rel"
   }
+
+  printf '%svhstack install%s  %s·  vhstack.github.io%s\n\n' "$BLD" "$RST" "$DIM" "$RST"
 
   # --- 0. Preconditions -------------------------------------------------------
 
-  step "Checking required tools"
-
+  label "tools"
   for tool in git curl; do
-    if ! command -v "$tool" &> /dev/null; then
-      echo "❌ '$tool' is required but not installed. Aborting."
-      exit 1
-    fi
+    command -v "$tool" &>/dev/null || fail "'$tool' is required but not installed."
   done
-
+  missing=""
   for tool in tmux nvim; do
-    if ! command -v "$tool" &> /dev/null; then
-      warn "'$tool' is not installed. The configuration will be set up anyway"
-      warn "and becomes active once you install it (e.g. sudo apt install $tool)."
-    fi
+    command -v "$tool" &>/dev/null || missing="$missing $tool"
   done
-  ok "Tool check done."
+  if [ -n "$missing" ]; then
+    warn "not installed:$missing — configs are set up anyway, active once installed"
+  else
+    ok "git, curl, tmux, nvim found"
+  fi
 
   # --- 1. Prompt: Oh My Posh + vhstack theme (termpp) -------------------------
 
-  step "Installing Oh My Posh prompt (vhstack/termpp)"
-
-  if ! command -v oh-my-posh &> /dev/null && [ ! -x "$HOME/.local/bin/oh-my-posh" ]; then
-    info "Installing Oh My Posh to ~/.local/bin ..."
+  label "prompt"
+  if ! command -v oh-my-posh &>/dev/null && [ ! -x "$HOME/.local/bin/oh-my-posh" ]; then
     mkdir -p "$HOME/.local/bin"
-    curl -s https://ohmyposh.dev/install.sh | bash -s -- -d "$HOME/.local/bin"
+    curl -s https://ohmyposh.dev/install.sh | bash -s -- -d "$HOME/.local/bin" >>"$LOG" 2>&1 ||
+      fail "Oh My Posh installation failed"
   fi
 
   mkdir -p "$HOME/.config/ohmyposh"
   backup "$HOME/.config/ohmyposh/vhstack.omp.json"
-  curl -sL https://raw.githubusercontent.com/vhstack/termpp/main/vhstack.omp.json \
-    -o "$HOME/.config/ohmyposh/vhstack.omp.json"
-  ok "Theme installed: ~/.config/ohmyposh/vhstack.omp.json"
+  curl -fsSL https://raw.githubusercontent.com/vhstack/termpp/main/vhstack.omp.json \
+    -o "$HOME/.config/ohmyposh/vhstack.omp.json" 2>>"$LOG" ||
+    fail "download of vhstack.omp.json failed"
 
   # Detect shell and pick the matching rc file
   SHELL_NAME=$(basename "${SHELL:-bash}")
   case "$SHELL_NAME" in
-    zsh)  RC_FILE="$HOME/.zshrc" ;;
-    bash) RC_FILE="$HOME/.bashrc" ;;
-    *)    warn "Unsupported shell: $SHELL_NAME — configuring for bash instead."
-          SHELL_NAME=bash
-          RC_FILE="$HOME/.bashrc" ;;
+    zsh) RC_FILE="$HOME/.zshrc" ;;
+    *)   SHELL_NAME=bash
+         RC_FILE="$HOME/.bashrc" ;;
   esac
   touch "$RC_FILE"
 
   # Keep a copy of the rc file before modifying it
   mkdir -p "$BACKUP_DIR"
   cp "$RC_FILE" "$BACKUP_DIR/$(basename "$RC_FILE")"
-  info "Backed up $RC_FILE -> $BACKUP_DIR/$(basename "$RC_FILE")"
 
   # True color support
   if ! grep -q "TERM=xterm-256color" "$RC_FILE"; then
@@ -115,137 +123,114 @@ main() {
       echo "# vhstack: true color support"
       echo "export TERM=xterm-256color"
     } >> "$RC_FILE"
-    ok "TERM=xterm-256color added to $RC_FILE."
   fi
 
   # Prompt init line
   if grep -q "oh-my-posh init" "$RC_FILE"; then
-    info "An oh-my-posh init call already exists in $RC_FILE — leaving it untouched."
+    ok "theme installed; existing oh-my-posh init in ${RC_FILE/#$HOME/\~} left untouched"
   else
     {
       echo ""
       echo "# oh-my-posh vhstack/termpp theme"
       echo 'eval "$('"$HOME"'/.local/bin/oh-my-posh init '"$SHELL_NAME"' --config ~/.config/ohmyposh/vhstack.omp.json)"'
     } >> "$RC_FILE"
-    ok "Oh My Posh init line added to $RC_FILE."
+    ok "theme installed; init line added to ${RC_FILE/#$HOME/\~}"
   fi
 
   # --- 2. Tmux configuration (tmuxpp) ------------------------------------------
 
-  step "Installing Tmux configuration (vhstack/tmuxpp)"
-
+  label "tmux"
   backup "$HOME/.tmux.conf"
   backup "$HOME/.tmux"
-
-  git clone --depth 1 https://github.com/vhstack/tmuxpp.git "$HOME/.tmux"
+  git clone --depth 1 --quiet https://github.com/vhstack/tmuxpp.git "$HOME/.tmux" 2>>"$LOG" ||
+    fail "clone of vhstack/tmuxpp failed"
   rm -rf "$HOME/.tmux/.git" "$HOME/.tmux/assets" "$HOME/.tmux"/README*.md
   ln -s "$HOME/.tmux/tmux.conf" "$HOME/.tmux.conf"
-  ok "Tmux configuration installed: ~/.tmux (~/.tmux.conf)"
+  ok "~/.tmux installed, ~/.tmux.conf linked"
 
   # --- 2b. WSL: fast clipboard via win32yank ------------------------------------
 
-  # Only relevant on WSL; on a server or plain Linux the block is skipped.
+  # Only relevant on WSL; on a server or plain Linux the step is skipped.
   # install_win32yank.sh ships with tmuxpp (pinned release, checksum-verified,
   # activates nothing if its function probe fails) — a failure here must not
   # abort the rest of the vhstack installation.
   if [ -n "${WSL_DISTRO_NAME:-}" ] || grep -qi microsoft /proc/version 2>/dev/null; then
-    step "WSL detected — installing win32yank.exe (fast clipboard, vhstack/tmuxpp)"
-    if sh "$HOME/.tmux/install_win32yank.sh" </dev/null; then
-      ok "win32yank.exe set up."
+    label "clipboard"
+    if sh "$HOME/.tmux/install_win32yank.sh" </dev/null >>"$LOG" 2>&1; then
+      ok "win32yank.exe active (WSL)"
     else
-      warn "win32yank setup failed — the clipboard falls back to powershell.exe."
-      warn "Retry later with: sh ~/.tmux/install_win32yank.sh"
+      warn "win32yank setup failed — clipboard falls back to powershell.exe"
+      showlog
+      printf '          %sretry later with: sh ~/.tmux/install_win32yank.sh%s\n' "$DIM" "$RST"
     fi
   fi
 
   # --- 3. Neovim configuration (nvimpp) ----------------------------------------
 
-  step "Installing Neovim configuration (vhstack/nvimpp)"
-
+  label "neovim"
   backup "$HOME/.config/nvim"
   # Move old plugin/runtime state aside for a clean start
   backup "$HOME/.local/share/nvim"
   backup "$HOME/.local/state/nvim"
   backup "$HOME/.cache/nvim"
-
-  git clone --depth 1 https://github.com/vhstack/nvimpp "$HOME/.config/nvim"
+  git clone --depth 1 --quiet https://github.com/vhstack/nvimpp "$HOME/.config/nvim" 2>>"$LOG" ||
+    fail "clone of vhstack/nvimpp failed"
   rm -rf "$HOME/.config/nvim/.git" "$HOME/.config/nvim/assets" "$HOME/.config/nvim"/README*.md
-  ok "Neovim configuration installed: ~/.config/nvim"
 
-  if command -v nvim &> /dev/null; then
-    info "Synchronizing Neovim plugins (headless, this may take a moment) ..."
-    if nvim --headless "+Lazy! sync" +qa > /dev/null 2>&1; then
-      ok "Neovim plugins synchronized."
-    else
-      warn "Plugin sync failed — plugins will be installed on the first nvim start."
-    fi
+  if ! command -v nvim &>/dev/null; then
+    ok "~/.config/nvim installed (plugins install on first nvim start)"
+  elif nvim --headless "+Lazy! sync" +qa >>"$LOG" 2>&1; then
+    ok "~/.config/nvim installed, plugins synchronized"
   else
-    warn "nvim not found — plugins will be installed on the first nvim start."
+    ok "~/.config/nvim installed (plugin sync failed — plugins install on first start)"
   fi
 
   # --- 4. xssh: SSH with X11 forwarding into a Xephyr screen --------------------
 
-  step "Installing xssh script (X11 via Xephyr, vhstack/termpp)"
-
+  label "xssh"
   mkdir -p "$HOME/.local/bin"
   backup "$HOME/.local/bin/xssh"
-  curl -sL https://raw.githubusercontent.com/vhstack/termpp/main/xssh \
-    -o "$HOME/.local/bin/xssh"
+  curl -fsSL https://raw.githubusercontent.com/vhstack/termpp/main/xssh \
+    -o "$HOME/.local/bin/xssh" 2>>"$LOG" || fail "download of xssh failed"
   chmod +x "$HOME/.local/bin/xssh"
-  ok "xssh installed: ~/.local/bin/xssh"
-
-  if ! command -v Xephyr &> /dev/null || ! command -v xdpyinfo &> /dev/null; then
-    warn "Xephyr/x11-utils not found — xssh needs them at runtime:"
-    warn "  sudo apt install xserver-xephyr openbox x11-utils"
+  if command -v Xephyr &>/dev/null && command -v xdpyinfo &>/dev/null; then
+    ok "~/.local/bin/xssh"
+  else
+    ok "~/.local/bin/xssh (runtime needs: sudo apt install xserver-xephyr openbox x11-utils)"
   fi
-
-  case ":$PATH:" in
-    *":$HOME/.local/bin:"*) ;;
-    *) warn "~/.local/bin is not in your PATH — add it to $RC_FILE to call xssh directly." ;;
-  esac
 
   # --- 5. update-vhstack: update command for later ------------------------------
 
-  step "Installing update-vhstack command (vhstack/vhstack)"
-
+  label "update"
   backup "$HOME/.local/bin/update-vhstack"
   if curl -fsSL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh \
-       -o "$HOME/.local/bin/update-vhstack"; then
+       -o "$HOME/.local/bin/update-vhstack" 2>>"$LOG"; then
     chmod +x "$HOME/.local/bin/update-vhstack"
-    ok "update-vhstack installed: ~/.local/bin/update-vhstack"
+    ok "~/.local/bin/update-vhstack — updates everything with one command"
   else
     rm -f "$HOME/.local/bin/update-vhstack"
-    warn "Download of update.sh failed — update later via:"
-    warn "  curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash"
+    warn "download failed — update later via: curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash"
   fi
+
+  label "backup"
+  ok "${BACKUP_DIR/#$HOME/\~}"
+  case ":$PATH:" in
+    *":$HOME/.local/bin:"*) ;;
+    *) note "" "${DIM}hint: ~/.local/bin is not in your PATH — needed for xssh and update-vhstack${RST}" ;;
+  esac
+
+  # Ob das lokale Terminal eine Nerd Font hat, laesst sich serverseitig nicht
+  # erkennen -- Probe ausgeben und den Nutzer selbst schauen lassen.
+  label "fontcheck"
+  printf '        \n'
+  note "" "${DIM}boxes instead of symbols? set font 'Cascadia Code NF' — see github.com/vhstack/termpp${RST}"
 
   # --- Summary ------------------------------------------------------------------
 
-  echo
-  echo "══════════════════════════════════════════════════════════════"
-  ok "vhstack environment installed!"
-  if [ -d "$BACKUP_DIR" ]; then
-    info "Previous configuration saved in: $BACKUP_DIR"
-  fi
-  echo
-  echo "Next steps:"
-  echo "  1. Start a new $SHELL_NAME session (or run: source $RC_FILE)"
-  echo "  2. Run 'tmux'  (Prefix = Ctrl+A)"
-  echo "  3. Run 'nvim'  — then ':MasonInstall clangd cmake-language-server' for C/C++ LSP"
-  echo
-  echo "Later on, bring everything up to date with a single command:"
-  echo "  update-vhstack"
-  echo
-  # The prompt and the tmux/nvim status lines use Nerd Font glyphs. Whether the
-  # local terminal renders them is invisible from the server side, so print a
-  # sample and let the user judge.
-  printf 'Font check:          \n'
-  echo "If the line above shows boxes or question marks instead of symbols,"
-  echo "your terminal font is not a Nerd Font. Select 'Cascadia Code NF' in"
-  echo "your terminal settings (Windows Terminal: Settings > Defaults >"
-  echo "Appearance > Font face). Details: https://github.com/vhstack/termpp"
-  echo
-  echo "🚀 Happy hacking!"
+  printf '\n%sdone in %ss.%s next steps:\n' "$BLD" "$SECONDS" "$RST"
+  echo "  1. start a new $SHELL_NAME session   (or: source ${RC_FILE/#$HOME/\~})"
+  echo "  2. run 'tmux'   (prefix = Ctrl+A)"
+  echo "  3. run 'nvim'   (:MasonInstall clangd cmake-language-server for C/C++ LSP)"
 }
 
 main "$@"
