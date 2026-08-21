@@ -15,6 +15,18 @@
 эти проекты сознательно согласованы между собой. Они дополняют друг друга как визуально, так и функционально, 
 с фокусом на ежедневный рабочий процесс.
 
+## ⚡ Быстрый старт
+
+Одна команда устанавливает полную рабочую среду (Prompt, Tmux, Neovim)
+на сервере:
+
+```bash
+curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash
+```
+
+Что именно делает скрипт, описано в
+[руководстве по установке](./INSTALL.ru.md).
+
 ## 🔧 Мои проекты
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)

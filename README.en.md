@@ -15,6 +15,18 @@ your coding workflow, and your personal style. Unlike many standalone setups you
 these projects are intentionally tuned to complement each other visually, functionally, and 
 with a focus on your daily workflow.
 
+## ⚡ Quick Start
+
+One command installs the complete working environment (prompt, Tmux, Neovim)
+on your server:
+
+```bash
+curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash
+```
+
+See the [installation guide](./INSTALL.en.md) for what the script does in
+detail.
+
 ## 🔧 My Projects
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)

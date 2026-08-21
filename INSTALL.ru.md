@@ -1,0 +1,53 @@
+<p align="right">
+  <a href="INSTALL.md"><img src="assets/flag-de.png" width="16" height="12" alt="Deutsch" title="Zur deutschen Version wechseln" /></a>  
+  <a href="INSTALL.en.md"><img src="assets/flag-gb.png" width="16" height="12" alt="English" title="Switch to English" /></a>  
+  <a href="INSTALL.ru.md"><img src="assets/flag-ru.png" width="16" height="12" alt="Русский" title="Переключиться на русскую версию" /></a>
+</p>
+
+# Установка vhstack
+
+Скрипт [`install.sh`](./install.sh) настраивает всю рабочую среду vhstack —
+**Oh My Posh Prompt** ([`vhstack/termpp`](https://github.com/vhstack/termpp)),
+**Tmux** ([`vhstack/tmuxpp`](https://github.com/vhstack/tmuxpp)) и **Neovim**
+([`vhstack/nvimpp`](https://github.com/vhstack/nvimpp)) — за один шаг:
+
+```bash
+curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash
+```
+
+Скрипт автоматически выполняет:
+
+- **Резервное копирование** существующих конфигураций в
+  `~/.vhstack-backup-<метка времени>` (`~/.tmux*`, `~/.config/nvim`, данные
+  плагинов Neovim, тема Prompt, а также копия `~/.bashrc`/`~/.zshrc`)
+- Установку **Oh My Posh** с темой `vhstack.omp.json` и строкой
+  инициализации в `~/.bashrc` или `~/.zshrc`
+- **Конфигурацию Tmux**
+- Только в WSL: **win32yank.exe** для быстрого буфера обмена
+  ([подробности в tmuxpp](https://github.com/vhstack/tmuxpp/blob/main/README.ru.md#win32yankexe-в-wsl))
+- **Конфигурацию Neovim**, включая синхронизацию плагинов (headless)
+- **Скрипт xssh** в `~/.local/bin` (X11 через Xephyr,
+  [подробности в termpp](https://github.com/vhstack/termpp))
+- **Команду update-vhstack** в `~/.local/bin` для последующих обновлений
+
+**Обновление позже:** Существующую установку обновляет команда
+`update-vhstack` (или [`update.sh`](./update.sh)) — тема, конфигурации Tmux
+и Neovim вместе с плагинами Neovim, не затрагивая `~/.bashrc`/`~/.zshrc`.
+Заменяемые конфигурации предварительно сохраняются в
+`~/.vhstack-backup-update-<метка времени>`:
+
+```bash
+update-vhstack   # или:
+curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash
+```
+
+Требования: `git` и `curl`; также должны быть установлены `tmux` и `nvim`:
+
+```bash
+sudo apt install tmux neovim ripgrep clangd   # Debian/Ubuntu
+brew install tmux neovim ripgrep llvm         # macOS
+```
+
+> **Совет:** После установки запустите новую оболочку (или `source ~/.bashrc`) и
+> откройте `tmux` и `nvim` по одному разу. При необходимости выполните в
+> Neovim `:MasonInstall clangd cmake-language-server` для C/C++ LSP.

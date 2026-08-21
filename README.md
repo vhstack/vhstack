@@ -15,6 +15,18 @@ deinen Code und deinen individuellen Stil zu optimieren. Anders als viele einzel
 sind diese Projekte bewusst aufeinander abgestimmt. Sie ergänzen sich sinnvoll – visuell, funktional 
 und mit Fokus auf den täglichen Workflow.
 
+## ⚡ Schnellstart
+
+Ein Befehl installiert die komplette Arbeitsumgebung (Prompt, Tmux, Neovim)
+auf dem Server:
+
+```bash
+curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash
+```
+
+Was das Skript im Einzelnen tut, steht in der
+[Installationsanleitung](./INSTALL.md).
+
 ## 🔧 Meine Projekte
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
