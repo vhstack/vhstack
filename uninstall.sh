@@ -251,6 +251,15 @@ main() {
     ok "removed: ~/.local/bin/update-vhstack"
   fi
 
+  # Das Versionsmanifest von install.sh/update.sh mit abraeumen -- sonst
+  # bleibt ~/.local/state/vhstack liegen und beschreibt nichts mehr.
+  STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/vhstack"
+  if [ -d "$STATE_DIR" ]; then
+    label "version"
+    rm -rf "$STATE_DIR"
+    ok "removed: ${STATE_DIR/#$HOME/\~}"
+  fi
+
   # --- Summary --------------------------------------------------------------------
 
   printf '\n%sdone.%s vhstack environment removed; start a new shell session.\n' "$BLD" "$RST"

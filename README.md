@@ -6,6 +6,8 @@
 
 # nvimpp, tmuxpp, termpp – dein Terminal, dein Code, dein Stil
 
+[![Version](https://img.shields.io/github/v/tag/vhstack/vhstack?label=version&sort=semver&color=8aadf4)](https://github.com/vhstack/vhstack/tags)
+
 [![CI](https://github.com/vhstack/vhstack/actions/workflows/ci.yml/badge.svg)](https://github.com/vhstack/vhstack/actions/workflows/ci.yml)
 
 Hallo, ich bin **vhstack** 👋

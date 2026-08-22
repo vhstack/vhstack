@@ -215,6 +215,37 @@ main() {
     warn "download failed — update later via: curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash"
   fi
 
+  # --- 6. Version manifest ------------------------------------------------------
+
+  # Die Klone verlieren oben ihr .git und termpp wird gar nicht geklont --
+  # 'git describe' ist beim Nutzer also nicht moeglich. Ein Manifest haelt
+  # fest, was installiert wurde; update.sh liest es fuer die alt->neu-Meldung.
+  label "version"
+  STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/vhstack"
+  mkdir -p "$STATE_DIR"
+
+  read_version()  { if [ -r "$1" ]; then tr -d ' \t\n\r' <"$1"; else echo unknown; fi; }
+  fetch_version() { curl -fsSL "https://raw.githubusercontent.com/vhstack/$1/main/VERSION" 2>>"$LOG" | tr -d ' \t\n\r'; }
+
+  # tmuxpp/nvimpp liegen als Klon vor, termpp nicht -- und install.sh selbst
+  # laeuft per 'curl | bash', kennt sein eigenes Repo also auch nicht lokal.
+  # Das '|| true' muss an den Aufruf: bei 'pipefail' reisst ein
+  # fehlgeschlagenes curl die Pipe mit und beendet sonst das Skript.
+  V_TMUXPP=$(read_version "$HOME/.tmux/VERSION")
+  V_NVIMPP=$(read_version "$HOME/.config/nvim/VERSION")
+  V_TERMPP=$(fetch_version termpp   || true); [ -n "$V_TERMPP" ]  || V_TERMPP=unknown
+  V_VHSTACK=$(fetch_version vhstack || true); [ -n "$V_VHSTACK" ] || V_VHSTACK=unknown
+
+  {
+    echo "VHSTACK=$V_VHSTACK"
+    echo "NVIMPP=$V_NVIMPP"
+    echo "TMUXPP=$V_TMUXPP"
+    echo "TERMPP=$V_TERMPP"
+    echo "INSTALLED=$(date +%Y-%m-%dT%H:%M:%S%z)"
+  } >"$STATE_DIR/versions"
+
+  ok "vhstack v$V_VHSTACK  ${DIM}(nvimpp v$V_NVIMPP · tmuxpp v$V_TMUXPP · termpp v$V_TERMPP)${RST}"
+
   label "backup"
   ok "${BACKUP_DIR/#$HOME/\~}"
   case ":$PATH:" in
@@ -230,7 +261,7 @@ main() {
 
   # --- Summary ------------------------------------------------------------------
 
-  printf '\n%sdone in %ss.%s next steps:\n' "$BLD" "$SECONDS" "$RST"
+  printf '\n%sdone in %ss.%s vhstack v%s — next steps:\n' "$BLD" "$SECONDS" "$RST" "$V_VHSTACK"
   echo "  1. start a new $SHELL_NAME session   (or: source ${RC_FILE/#$HOME/\~})"
   echo "  2. run 'tmux'   (prefix = Ctrl+A)"
   echo "  3. run 'nvim'   (:MasonInstall clangd cmake-language-server for C/C++ LSP)"

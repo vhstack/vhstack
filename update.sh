@@ -99,6 +99,23 @@ main() {
     exit 1
   fi
 
+  # --- Bisher installierte Versionen (fuer die alt->neu-Meldung am Ende) -------
+
+  # Zeilenweise geparst, nicht 'source': die Datei wird nie ausgefuehrt.
+  STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/vhstack"
+  OLD_VHSTACK=unknown; OLD_NVIMPP=unknown
+  OLD_TMUXPP=unknown;  OLD_TERMPP=unknown
+  if [ -r "$STATE_DIR/versions" ]; then
+    while IFS='=' read -r key val; do
+      case "$key" in
+        VHSTACK) OLD_VHSTACK="$val" ;;
+        NVIMPP)  OLD_NVIMPP="$val"  ;;
+        TMUXPP)  OLD_TMUXPP="$val"  ;;
+        TERMPP)  OLD_TERMPP="$val"  ;;
+      esac
+    done <"$STATE_DIR/versions"
+  fi
+
   # --- 1. Prompt theme (termpp) -------------------------------------------------
 
   label "prompt"
@@ -198,6 +215,50 @@ main() {
       chmod +x "$HOME/.local/bin/update-vhstack"
     fi
   fi
+
+  # --- 6. Version manifest ------------------------------------------------------
+
+  label "version"
+  mkdir -p "$STATE_DIR"
+
+  read_version()  { if [ -r "$1" ]; then tr -d ' \t\n\r' <"$1"; else echo unknown; fi; }
+  fetch_version() { curl -fsSL "https://raw.githubusercontent.com/vhstack/$1/main/VERSION" 2>>"$LOG" | tr -d ' \t\n\r'; }
+
+  # Das '|| true' muss an den Aufruf: bei 'pipefail' reisst ein
+  # fehlgeschlagenes curl die Pipe mit und beendet sonst das Skript.
+  NEW_TMUXPP=$(read_version "$HOME/.tmux/VERSION")
+  NEW_NVIMPP=$(read_version "$HOME/.config/nvim/VERSION")
+  NEW_TERMPP=$(fetch_version termpp   || true); [ -n "$NEW_TERMPP" ]  || NEW_TERMPP=unknown
+  NEW_VHSTACK=$(fetch_version vhstack || true); [ -n "$NEW_VHSTACK" ] || NEW_VHSTACK=unknown
+
+  {
+    echo "VHSTACK=$NEW_VHSTACK"
+    echo "NVIMPP=$NEW_NVIMPP"
+    echo "TMUXPP=$NEW_TMUXPP"
+    echo "TERMPP=$NEW_TERMPP"
+    echo "UPDATED=$(date +%Y-%m-%dT%H:%M:%S%z)"
+  } >"$STATE_DIR/versions"
+  ok "${STATE_DIR/#$HOME/\~}/versions"
+
+  # Kein '&& return', sondern if/fi -- bei 'set -e' wuerde ein falscher Test
+  # als letztes Kommando der Funktion das Skript beenden.
+  report() {   # $1 Name  $2 alt  $3 neu
+    if [ "$3" = unknown ]; then
+      return 0
+    elif [ "$2" = unknown ]; then
+      note "" "$1 ${BLD}v$3${RST} ${DIM}(erstmals erfasst)${RST}"
+    elif [ "$2" = "$3" ]; then
+      note "" "${DIM}$1 v$3 unveraendert${RST}"
+    else
+      note "" "$1 ${DIM}v$2${RST} -> ${BLD}v$3${RST}"
+    fi
+  }
+  # vhstack zuerst: das Skript ersetzt sich oben selbst, die neue Fassung
+  # greift also erst beim naechsten Aufruf.
+  report vhstack "$OLD_VHSTACK" "$NEW_VHSTACK"
+  report nvimpp "$OLD_NVIMPP" "$NEW_NVIMPP"
+  report tmuxpp "$OLD_TMUXPP" "$NEW_TMUXPP"
+  report termpp "$OLD_TERMPP" "$NEW_TERMPP"
 
   # --- Summary ------------------------------------------------------------------
 
