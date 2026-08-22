@@ -37,23 +37,47 @@ main() {
   TMP_DIR=$(mktemp -d)
   trap 'rm -rf "$TMP_DIR"' EXIT
 
-  # --- Ausgabe: feste Label-Spalte, Status dezent farbig (nur am Terminal).
-  # Unterbefehle schreiben in ein Log, das nur im Fehlerfall gezeigt wird.
-  if [ -t 1 ]; then
-    BLD=$'\033[1m'; DIM=$'\033[2m'; GRN=$'\033[32m'; YEL=$'\033[33m'
-    RED=$'\033[31m'; RST=$'\033[0m'
+  # --- Ausgabe im Stil der Landing-Page (vhstack.github.io): Module blau,
+  # Erfolg gruen, Hinweise peach, Nebensaechliches gedimmt. Catppuccin-
+  # Truecolor wo das Terminal es meldet, sonst die 16 Standardfarben;
+  # ohne Terminal (Pipe) oder mit NO_COLOR bleibt alles schmucklos.
+  if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    if [ "${COLORTERM:-}" = "truecolor" ] || [ "${COLORTERM:-}" = "24bit" ]; then
+      BLU=$'\033[38;2;138;173;244m'   # Catppuccin blue
+      GRN=$'\033[38;2;166;227;161m'   # Catppuccin green
+      PCH=$'\033[38;2;245;169;127m'   # Catppuccin peach
+      RED=$'\033[38;2;243;139;168m'   # Catppuccin red
+    else
+      BLU=$'\033[34m'; GRN=$'\033[32m'; PCH=$'\033[33m'; RED=$'\033[31m'
+    fi
+    BLD=$'\033[1m'; DIM=$'\033[2m'; RST=$'\033[0m'
   else
-    BLD=""; DIM=""; GRN=""; YEL=""; RED=""; RST=""
+    BLU=""; GRN=""; PCH=""; RED=""; BLD=""; DIM=""; RST=""
   fi
+
+  # Glyphen nur bei UTF-8-Locale, sonst ASCII -- Statusmarken sind in beiden
+  # Varianten 2 Spalten breit, damit die Nachrichtenspalte buendig bleibt.
+  RULE=$(printf '%78s' '')
+  # shellcheck disable=SC2034  # gemeinsame Glyphen der drei Skripte -- nicht jedes nutzt alle
+  case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in
+    *[Uu][Tt][Ff]-8*|*[Uu][Tt][Ff]8*)
+      CHK='✓ '; WRN='! '; FLD='✗ '; SKP='· '; SEP='·'; ARR='→'; CUR='▊'; RULE=${RULE// /─} ;;
+    *)
+      CHK='ok'; WRN='! '; FLD='x '; SKP='- '; SEP='-'; ARR='->'; CUR=' '; RULE=${RULE// /-} ;;
+  esac
+
+  # Unterbefehle schreiben in ein Log, das nur im Fehlerfall gezeigt wird.
   LOG="$TMP_DIR/log"
 
-  label()   { : >"$LOG"; printf '  %-10s ' "$1"; }
-  ok()      { printf '%sok%s      %s\n' "$GRN" "$RST" "$1"; }
-  warn()    { printf '%swarn%s    %s\n' "$YEL" "$RST" "$1"; }
-  skip()    { printf '%s--      %s%s\n' "$DIM" "$1" "$RST"; }
-  showlog() { if [ -s "$LOG" ]; then sed "s/^/          $DIM/;s/\$/$RST/" "$LOG"; fi; }
-  fail()    { printf '%sfail%s    %s\n' "$RED" "$RST" "$1"; showlog; exit 1; }
-  note()    { printf '  %-10s %s\n' "$1" "$2"; }
+  label()   { : >"$LOG"; printf '  %s%-10s%s ' "$BLU" "$1" "$RST"; }
+  ok()      { printf '%s%s%s %s\n' "$GRN" "$CHK" "$RST" "$1"; }
+  warn()    { printf '%s%s%s %s\n' "$PCH" "$WRN" "$RST" "$1"; }
+  skip()    { printf '%s%s %s%s\n' "$DIM" "$SKP" "$1" "$RST"; }
+  showlog() { if [ -s "$LOG" ]; then sed "s/^/                $DIM/;s/\$/$RST/" "$LOG"; fi; }
+  fail()    { printf '%s%s%s %s\n' "$RED" "$FLD" "$RST" "$1"; showlog; exit 1; }
+  # Gedimmte Folgezeile, buendig unter der Nachrichtenspalte (16 = 2 Rand
+  # + 10 Label + 1 + 2 Statusmarke + 1)
+  extra()   { printf '                %s%s%s\n' "$DIM" "$1" "$RST"; }
 
   # Download a file to the temp directory first and only replace the
   # target on success — a failed download must never clobber a working
@@ -80,22 +104,26 @@ main() {
     cp -a "$path" "$BACKUP_DIR/$rel"
   }
 
-  printf '%svhstack update%s  %s·  vhstack.github.io%s\n\n' "$BLD" "$RST" "$DIM" "$RST"
+  # Kopf wie auf der Landing-Page: Name mit Block-Cursor, Quelle rechtsbuendig
+  printf '\n  %svhstack update%s %s%s%s%45s%svhstack.github.io%s\n' \
+    "$BLD" "$RST" "$PCH" "$CUR" "$RST" '' "$DIM" "$RST"
+  printf '  %s%s%s\n\n' "$DIM" "$RULE" "$RST"
 
   # --- 0. Preconditions -------------------------------------------------------
 
   for tool in git curl; do
     command -v "$tool" &>/dev/null || {
-      printf '  %sfail%s    '\''%s'\'' is required but not installed.\n' "$RED" "$RST" "$tool"
-      exit 1
+      label "tools"
+      fail "'$tool' is required but not installed."
     }
   done
 
   if [ ! -e "$HOME/.config/ohmyposh/vhstack.omp.json" ] \
      && [ ! -e "$HOME/.tmux/tmux.conf" ] \
      && [ ! -e "$HOME/.config/nvim/init.lua" ]; then
-    printf '  %sfail%s    no vhstack installation found — run install.sh first:\n' "$RED" "$RST"
-    echo   "          curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash"
+    label "vhstack"
+    printf '%s%s%s no vhstack installation found — run install.sh first:\n' "$RED" "$FLD" "$RST"
+    extra "curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash"
     exit 1
   fi
 
@@ -158,7 +186,7 @@ main() {
 
     if command -v tmux &>/dev/null && [ -n "${TMUX:-}" ]; then
       tmux source-file "$HOME/.tmux.conf" >/dev/null 2>&1 || true
-      ok "~/.tmux updated, running session reloaded"
+      ok "~/.tmux updated $SEP running session reloaded"
     else
       ok "~/.tmux updated"
     fi
@@ -181,7 +209,7 @@ main() {
     if ! command -v nvim &>/dev/null; then
       ok "~/.config/nvim updated (plugins update on next nvim start)"
     elif nvim --headless "+Lazy! sync" +qa >>"$LOG" 2>&1; then
-      ok "~/.config/nvim updated, plugins synchronized"
+      ok "~/.config/nvim updated $SEP plugins synchronized"
     else
       ok "~/.config/nvim updated (plugin sync failed — plugins update on next start)"
     fi
@@ -246,11 +274,11 @@ main() {
     if [ "$3" = unknown ]; then
       return 0
     elif [ "$2" = unknown ]; then
-      note "" "$1 ${BLD}v$3${RST} ${DIM}(erstmals erfasst)${RST}"
+      printf '                %-7s %sv%s%s %s(first recorded)%s\n' "$1" "$BLU" "$3" "$RST" "$DIM" "$RST"
     elif [ "$2" = "$3" ]; then
-      note "" "${DIM}$1 v$3 unveraendert${RST}"
+      printf '                %s%-7s v%s unchanged%s\n' "$DIM" "$1" "$3" "$RST"
     else
-      note "" "$1 ${DIM}v$2${RST} -> ${BLD}v$3${RST}"
+      printf '                %-7s %sv%s%s %s %sv%s%s\n' "$1" "$DIM" "$2" "$RST" "$ARR" "$BLU" "$3" "$RST"
     fi
   }
   # vhstack zuerst: das Skript ersetzt sich oben selbst, die neue Fassung
@@ -266,7 +294,10 @@ main() {
     label "backup"
     ok "${BACKUP_DIR/#$HOME/\~}"
   fi
-  printf '\n%sdone in %ss.%s tmux reloads with prefix + r (Ctrl+A), nvim plugins are in sync.\n' "$BLD" "$SECONDS" "$RST"
+
+  printf '\n  %s%s%s\n' "$DIM" "$RULE" "$RST"
+  printf '  %sdone in %ss%s   %stmux reloads with prefix + r (Ctrl+A) %s nvim plugins are in sync%s\n' \
+    "$BLD" "$SECONDS" "$RST" "$DIM" "$SEP" "$RST"
 }
 
 main "$@"

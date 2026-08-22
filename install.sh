@@ -63,12 +63,13 @@ main() {
 
   # Glyphen nur bei UTF-8-Locale, sonst ASCII -- Statusmarken sind in beiden
   # Varianten 2 Spalten breit, damit die Nachrichtenspalte buendig bleibt.
-  RULE=$(printf '%70s' '')
+  RULE=$(printf '%78s' '')
+  # shellcheck disable=SC2034  # gemeinsame Glyphen der drei Skripte -- nicht jedes nutzt alle
   case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in
     *[Uu][Tt][Ff]-8*|*[Uu][Tt][Ff]8*)
-      CHK='✓ '; WRN='! '; FLD='✗ '; SEP='·'; CUR='▊'; RULE=${RULE// /─} ;;
+      CHK='✓ '; WRN='! '; FLD='✗ '; SKP='· '; SEP='·'; ARR='→'; CUR='▊'; RULE=${RULE// /─} ;;
     *)
-      CHK='ok'; WRN='! '; FLD='x '; SEP='-'; CUR=' '; RULE=${RULE// /-} ;;
+      CHK='ok'; WRN='! '; FLD='x '; SKP='- '; SEP='-'; ARR='->'; CUR=' '; RULE=${RULE// /-} ;;
   esac
 
   # Unterbefehle schreiben in ein Log, das nur im Fehlerfall gezeigt wird --
@@ -96,7 +97,7 @@ main() {
   }
 
   # Kopf wie auf der Landing-Page: Name mit Block-Cursor, Quelle rechtsbuendig
-  printf '\n  %svhstack install%s %s%s%s%36s%svhstack.github.io%s\n' \
+  printf '\n  %svhstack install%s %s%s%s%44s%svhstack.github.io%s\n' \
     "$BLD" "$RST" "$PCH" "$CUR" "$RST" '' "$DIM" "$RST"
   printf '  %s%s%s\n\n' "$DIM" "$RULE" "$RST"
 
