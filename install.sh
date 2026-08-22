@@ -54,7 +54,12 @@ main() {
       PCH=$'\033[38;2;245;169;127m'   # Catppuccin peach
       RED=$'\033[38;2;243;139;168m'   # Catppuccin red
     else
-      BLU=$'\033[34m'; GRN=$'\033[32m'; PCH=$'\033[33m'; RED=$'\033[31m'
+      case "${TERM:-}" in
+        *256color*)  # ohne COLORTERM (etwa ueber SSH): naechstliegende 256er-Toene
+          BLU=$'\033[38;5;111m'; GRN=$'\033[38;5;151m'; PCH=$'\033[38;5;216m'; RED=$'\033[38;5;211m' ;;
+        *)
+          BLU=$'\033[34m'; GRN=$'\033[32m'; PCH=$'\033[33m'; RED=$'\033[31m' ;;
+      esac
     fi
     BLD=$'\033[1m'; DIM=$'\033[2m'; RST=$'\033[0m'
   else
@@ -151,6 +156,18 @@ main() {
       echo ""
       echo "# vhstack: true color support"
       echo "export TERM=xterm-256color"
+    } >> "$RC_FILE"
+  fi
+
+  # COLORTERM meldet Truecolor, wird von ssh aber nicht weitergereicht --
+  # auf dem Server fehlt es daher fast immer, obwohl das lokale Terminal
+  # Truecolor kann. Der Stack setzt moderne Terminals ohnehin voraus
+  # (Nerd Font), also wird es hier angesagt.
+  if ! grep -q "COLORTERM=truecolor" "$RC_FILE"; then
+    {
+      echo ""
+      echo "# vhstack: advertise truecolor (not forwarded by ssh)"
+      echo "export COLORTERM=truecolor"
     } >> "$RC_FILE"
   fi
 
@@ -273,12 +290,22 @@ main() {
   label "backup"
   ok "${BACKUP_DIR/#$HOME/\~}"
 
-  # Hinweise als eigene Zeilen mit peach-Marke: nur zeigen, was wirklich ansteht
+  # Hinweise als eigene Zeilen: nur zeigen, was wirklich ansteht. Fehlt
+  # ~/.local/bin im PATH, wird es idempotent in die rc-Datei eingetragen
+  # (Marker + genau eine Folgezeile, uninstall.sh baut das wieder ab).
   case ":$PATH:" in
     *":$HOME/.local/bin:"*) ;;
     *) printf '\n'
        label "path"
-       warn "~/.local/bin is not in your PATH — needed for xssh, update-vhstack"
+       if ! grep -qF '# vhstack: ~/.local/bin' "$RC_FILE"; then
+         {
+           echo ""
+           echo "# vhstack: ~/.local/bin for xssh and update-vhstack"
+           # shellcheck disable=SC2016  # $PATH soll woertlich in die rc-Datei
+           echo 'case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) PATH="$HOME/.local/bin:$PATH" ;; esac'
+         } >> "$RC_FILE"
+       fi
+       ok "~/.local/bin added to PATH in ${RC_FILE/#$HOME/\~} $SEP active in new shell sessions"
        PATH_HINTED=1 ;;
   esac
 
