@@ -21,8 +21,15 @@ und mit Fokus auf den täglichen Workflow.
 
 ## ⚡ Schnellstart
 
-Ein Befehl installiert die komplette Arbeitsumgebung (Prompt, Tmux, Neovim)
-auf dem Server:
+Auf einem frischen System zuerst die Pakete installieren:
+
+```bash
+sudo apt update
+sudo apt install tmux neovim unzip ripgrep clangd
+```
+
+Dann installiert ein Befehl die komplette Arbeitsumgebung (Prompt, Tmux,
+Neovim) auf dem Server:
 
 ```bash
 curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash

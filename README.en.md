@@ -21,8 +21,15 @@ with a focus on your daily workflow.
 
 ## ⚡ Quick Start
 
-One command installs the complete working environment (prompt, Tmux, Neovim)
-on your server:
+On a fresh system, install the packages first:
+
+```bash
+sudo apt update
+sudo apt install tmux neovim unzip ripgrep clangd
+```
+
+Then one command installs the complete working environment (prompt, Tmux,
+Neovim) on your server:
 
 ```bash
 curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash

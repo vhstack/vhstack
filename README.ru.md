@@ -21,7 +21,14 @@
 
 ## ⚡ Быстрый старт
 
-Одна команда устанавливает полную рабочую среду (Prompt, Tmux, Neovim)
+На чистой системе сначала установите пакеты:
+
+```bash
+sudo apt update
+sudo apt install tmux neovim unzip ripgrep clangd
+```
+
+Затем одна команда устанавливает полную рабочую среду (Prompt, Tmux, Neovim)
 на сервере:
 
 ```bash

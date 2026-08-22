@@ -45,8 +45,9 @@ curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash
 Voraussetzungen: `git` und `curl`; `tmux` und `nvim` sollten installiert sein:
 
 ```bash
-sudo apt install tmux neovim ripgrep clangd   # Debian/Ubuntu
-brew install tmux neovim ripgrep llvm         # macOS
+sudo apt update
+sudo apt install tmux neovim unzip ripgrep clangd   # Debian/Ubuntu
+brew install tmux neovim ripgrep llvm               # macOS
 ```
 
 > **Tipp:** Danach eine neue Shell starten (oder `source ~/.bashrc`) und `tmux`
