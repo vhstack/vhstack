@@ -48,7 +48,12 @@ main() {
       PCH=$'\033[38;2;245;169;127m'   # Catppuccin peach
       RED=$'\033[38;2;243;139;168m'   # Catppuccin red
     else
-      BLU=$'\033[34m'; GRN=$'\033[32m'; PCH=$'\033[33m'; RED=$'\033[31m'
+      case "${TERM:-}" in
+        *256color*)  # ohne COLORTERM (etwa ueber SSH): naechstliegende 256er-Toene
+          BLU=$'\033[38;5;111m'; GRN=$'\033[38;5;151m'; PCH=$'\033[38;5;216m'; RED=$'\033[38;5;211m' ;;
+        *)
+          BLU=$'\033[34m'; GRN=$'\033[32m'; PCH=$'\033[33m'; RED=$'\033[31m' ;;
+      esac
     fi
     BLD=$'\033[1m'; DIM=$'\033[2m'; RST=$'\033[0m'
   else

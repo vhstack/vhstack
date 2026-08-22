@@ -52,7 +52,12 @@ main() {
       PCH=$'\033[38;2;245;169;127m'   # Catppuccin peach
       RED=$'\033[38;2;243;139;168m'   # Catppuccin red
     else
-      BLU=$'\033[34m'; GRN=$'\033[32m'; PCH=$'\033[33m'; RED=$'\033[31m'
+      case "${TERM:-}" in
+        *256color*)  # ohne COLORTERM (etwa ueber SSH): naechstliegende 256er-Toene
+          BLU=$'\033[38;5;111m'; GRN=$'\033[38;5;151m'; PCH=$'\033[38;5;216m'; RED=$'\033[38;5;211m' ;;
+        *)
+          BLU=$'\033[34m'; GRN=$'\033[32m'; PCH=$'\033[33m'; RED=$'\033[31m' ;;
+      esac
     fi
     BLD=$'\033[1m'; DIM=$'\033[2m'; RST=$'\033[0m'
   else
@@ -87,9 +92,11 @@ main() {
     grep -qi microsoft /proc/version 2>/dev/null
   }
 
+  # Alle '# vhstack: ...'-Marker (TERM, COLORTERM, PATH) plus der omp-Marker;
+  # jeder Block ist Marker-Zeile + genau eine Folgezeile (siehe install.sh).
   rc_has_markers() {
     [ -f "$1" ] && grep -Eq \
-      "^# (vhstack: true color support|oh-my-posh vhstack/termpp theme)$" "$1"
+      "^# (vhstack: |oh-my-posh vhstack/termpp theme$)" "$1"
   }
 
   # Kopf wie auf der Landing-Page: Name mit Block-Cursor, Quelle rechtsbuendig
@@ -251,7 +258,7 @@ main() {
         # laeuft (BSD-sed kennt kein ',+1d').
         tmp=$(mktemp)
         awk '
-          /^# vhstack: true color support$/      { skip = 2 }
+          /^# vhstack: /                         { skip = 2 }
           /^# oh-my-posh vhstack\/termpp theme$/ { skip = 2 }
           skip > 0 { skip--; next }
           { print }
