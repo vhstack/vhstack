@@ -46,8 +46,6 @@ Later, one command brings everything up to date:
 update-vhstack
 ```
 
-![vhstack update – old→new report](assets/update.gif)
-
 ## 🔧 My Projects
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)

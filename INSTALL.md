@@ -42,6 +42,8 @@ update-vhstack   # oder:
 curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash
 ```
 
+![vhstack update – alt→neu-Report](assets/update.gif)
+
 Voraussetzungen: `git` und `curl`; `tmux` und `nvim` sollten installiert sein:
 
 ```bash

@@ -41,6 +41,8 @@ update-vhstack   # или:
 curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash
 ```
 
+![Обновление vhstack — отчёт «было → стало»](assets/update.gif)
+
 Требования: `git` и `curl`; также должны быть установлены `tmux` и `nvim`:
 
 ```bash

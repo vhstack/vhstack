@@ -46,8 +46,6 @@ curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bas
 update-vhstack
 ```
 
-![Обновление vhstack — отчёт «было → стало»](assets/update.gif)
-
 ## 🔧 Мои проекты
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
