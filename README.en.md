@@ -35,8 +35,18 @@ Neovim) on your server:
 curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash
 ```
 
+![vhstack install – one command sets up everything](assets/install.gif)
+
 See the [installation guide](./INSTALL.en.md) for what the script does in
 detail.
+
+Later, one command brings everything up to date:
+
+```bash
+update-vhstack
+```
+
+![vhstack update – old→new report](assets/update.gif)
 
 ## 🔧 My Projects
 

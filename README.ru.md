@@ -35,8 +35,18 @@ sudo apt install tmux neovim unzip ripgrep clangd
 curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash
 ```
 
+![Установка vhstack — одна команда настраивает всё](assets/install.gif)
+
 Что именно делает скрипт, описано в
 [руководстве по установке](./INSTALL.ru.md).
+
+Позже одна команда обновляет всё до актуального состояния:
+
+```bash
+update-vhstack
+```
+
+![Обновление vhstack — отчёт «было → стало»](assets/update.gif)
 
 ## 🔧 Мои проекты
 
