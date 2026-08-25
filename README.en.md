@@ -49,16 +49,16 @@ vhstack-update
 ## 🔧 My Projects
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
-**Your Neovim setup:**  
-A fast, modular, productivity-oriented configuration that transforms Neovim into a modern, flexible development tool.
+**Neovim as a C/C++ IDE:**  
+clangd, Telescope, Treesitter, Neo-tree and Outline, lazy-loaded and ready in under 100 ms.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
-**Terminal sessions with Tmux, perfectly organized:**  
-Optimized keybindings and smart integrations that make your terminal sessions more efficient and well-structured.
+**tmux that just works:**  
+Copy and paste with the mouse straight into the system clipboard, even over SSH via OSC 52. Sensible keys, three themes, no plugin manager.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp)
-**Personalized terminal environment:**  
-A tailor-made setup that combines colors, fonts, and tools seamlessly to customize your terminal experience to your liking.
+**Terminal, Nerd Font and prompt:**  
+Windows Terminal with Catppuccin and Cascadia Code NF. The Oh My Posh prompt shows git status, errors and run time, and true color reaches all the way to the server.
 
 ## ✨ About Me
 
@@ -69,3 +69,5 @@ in the shell or in tools like Neovim.
 ---
 
 *"The code we write is an expression of ourselves—make it as individual as you are."*
+
+MIT License · [vhstack.github.io](https://vhstack.github.io)

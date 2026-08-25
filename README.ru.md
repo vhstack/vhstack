@@ -49,19 +49,16 @@ vhstack-update
 ## 🔧 Мои проекты
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
-**Твой сетап для Neovim:**  
-Быстрый, модульный и ориентированный на продуктивность, он превращает Neovim в современный, 
-гибкий инструмент разработки.
+**Neovim как C/C++ IDE:**  
+clangd, Telescope, Treesitter, Neo-tree и Outline, ленивая загрузка и старт быстрее 100 мс.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
-**Сессии терминала с Tmux, идеально организованные:**  
-Оптимизированные сочетания клавиш и умные интеграции, которые делают твои терминальные сессии более 
-эффективными и упорядоченными.
+**tmux, который просто работает:**  
+Копирование и вставка мышью прямо в системный буфер обмена, в том числе по SSH через OSC 52. Удобные клавиши, три темы, без менеджера плагинов.
 
 ### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp)
-**Персонализированный терминальный сетап:**  
-Индивидуальный набор, который идеально сочетает цвета, шрифты и инструменты, 
-чтобы персонализировать твой опыт работы в терминале.
+**Терминал, Nerd Font и prompt:**  
+Windows Terminal с Catppuccin и Cascadia Code NF. Prompt Oh My Posh показывает статус git, ошибки и время выполнения, а True Color работает вплоть до сервера.
 
 ## ✨ Обо мне
 
@@ -73,3 +70,5 @@ vhstack-update
 ---
 
 *«Код, который мы пишем, — это выражение нас самих. Сделай его таким же уникальным, как и ты.»*
+
+Лицензия MIT · [vhstack.github.io](https://vhstack.github.io)
