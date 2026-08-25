@@ -43,7 +43,7 @@ detail.
 Later, one command brings everything up to date:
 
 ```bash
-update-vhstack
+vhstack-update
 ```
 
 ## 🔧 My Projects

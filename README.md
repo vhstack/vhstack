@@ -43,7 +43,7 @@ Was das Skript im Einzelnen tut, steht in der
 Später bringt ein Befehl alles auf den aktuellen Stand:
 
 ```bash
-update-vhstack
+vhstack-update
 ```
 
 ## 🔧 Meine Projekte

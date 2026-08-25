@@ -28,16 +28,16 @@ curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bas
 - **Конфигурацию Neovim**, включая синхронизацию плагинов (headless)
 - **Скрипт xssh** в `~/.local/bin` (X11 через Xephyr,
   [подробности в termpp](https://github.com/vhstack/termpp))
-- **Команду update-vhstack** в `~/.local/bin` для последующих обновлений
+- **Команду vhstack-update** в `~/.local/bin` для последующих обновлений
 
 **Обновление позже:** Существующую установку обновляет команда
-`update-vhstack` (или [`update.sh`](./update.sh)) — тема, конфигурации Tmux
+`vhstack-update` (или [`update.sh`](./update.sh)) — тема, конфигурации Tmux
 и Neovim вместе с плагинами Neovim, не затрагивая `~/.bashrc`/`~/.zshrc`.
 Заменяемые конфигурации предварительно сохраняются в
 `~/.vhstack-backup-update-<метка времени>`:
 
 ```bash
-update-vhstack   # или:
+vhstack-update   # или:
 curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash
 ```
 
@@ -63,7 +63,7 @@ brew install tmux neovim ripgrep llvm               # macOS
 | Tmux | `~/.tmux/`, символьная ссылка `~/.tmux.conf` |
 | Буфер обмена (только WSL) | `%LOCALAPPDATA%\win32yank`, символьная ссылка в PATH, `~/.cache/tmuxpp/` |
 | Neovim | `~/.config/nvim/`, данные плагинов в `~/.local/share/nvim`, `~/.local/state/nvim`, `~/.cache/nvim` |
-| Инструменты | `~/.local/bin/xssh`, `~/.local/bin/update-vhstack` |
+| Инструменты | `~/.local/bin/xssh`, `~/.local/bin/vhstack-update` |
 
 `install.sh` идемпотентен: повторный запуск обновляет установку, а всё существующее предварительно переносится в новый каталог резервных копий.
 

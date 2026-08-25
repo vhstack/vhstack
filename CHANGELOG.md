@@ -8,6 +8,12 @@ Für eine Konfigurationssammlung gilt:
 - **minor** — neue Funktionen, abwärtskompatibel
 - **patch** — Fehlerbehebungen, Feinschliff
 
+## [1.0.1] — 2026-08-25
+
+- Update-Befehl von `update-vhstack` in `vhstack-update` umbenannt
+  (Projektname als Präfix, bessere Tab-Vervollständigung). `install.sh`
+  entfernt den alten Befehl automatisch, `uninstall.sh` räumt beide Namen ab.
+
 ## [1.0.0] — 2026-08-22
 
 Erstes getaggtes Release des Installers. Der Stand entspricht der bisherigen
@@ -29,7 +35,7 @@ Zeitpunkt des Release, sie legt ihn nicht fest.
 - `install.sh` richtet Prompt, tmux, Neovim und `xssh` in einem Lauf ein und
   legt vorhandene Konfigurationen vorher nach `~/.vhstack-backup-<Zeitstempel>`
 - `update.sh` bringt eine bestehende Installation auf den neuesten Stand, ohne
-  die Shell-Startdateien anzufassen; wird als `update-vhstack` mitinstalliert
+  die Shell-Startdateien anzufassen; wird als `update-vhstack` mitinstalliert (seit 1.0.1: `vhstack-update`)
 - `uninstall.sh` entfernt die Umgebung und lässt die Backups stehen
 
 ### Neu in diesem Release

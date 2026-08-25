@@ -8,7 +8,7 @@
 #      on WSL additionally win32yank.exe for a fast clipboard
 #   3. Neovim C/C++ configuration                 (vhstack/nvimpp)
 #   4. xssh helper script (SSH into a Xephyr X-screen, see README)
-#   5. update-vhstack command to ~/.local/bin — run it any time to pull
+#   5. vhstack-update command to ~/.local/bin — run it any time to pull
 #      the latest configurations without a full reinstall
 #
 # Existing configurations are moved to a timestamped backup directory
@@ -245,16 +245,17 @@ main() {
     extra "needs: sudo apt install xserver-xephyr openbox x11-utils"
   fi
 
-  # --- 5. update-vhstack: update command for later ------------------------------
+  # --- 5. vhstack-update: update command for later ------------------------------
 
   label "update"
-  backup "$HOME/.local/bin/update-vhstack"
+  rm -f "$HOME/.local/bin/update-vhstack"   # old name (< 1.0.1)
+  backup "$HOME/.local/bin/vhstack-update"
   if curl -fsSL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh \
-       -o "$HOME/.local/bin/update-vhstack" 2>>"$LOG"; then
-    chmod +x "$HOME/.local/bin/update-vhstack"
-    ok "~/.local/bin/update-vhstack — updates everything with one command"
+       -o "$HOME/.local/bin/vhstack-update" 2>>"$LOG"; then
+    chmod +x "$HOME/.local/bin/vhstack-update"
+    ok "~/.local/bin/vhstack-update — updates everything with one command"
   else
-    rm -f "$HOME/.local/bin/update-vhstack"
+    rm -f "$HOME/.local/bin/vhstack-update"
     warn "download failed — update later via: curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash"
   fi
 
@@ -300,7 +301,7 @@ main() {
        if ! grep -qF '# vhstack: ~/.local/bin' "$RC_FILE"; then
          {
            echo ""
-           echo "# vhstack: ~/.local/bin for xssh and update-vhstack"
+           echo "# vhstack: ~/.local/bin for xssh and vhstack-update"
            # shellcheck disable=SC2016  # $PATH soll woertlich in die rc-Datei
            echo 'case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) PATH="$HOME/.local/bin:$PATH" ;; esac'
          } >> "$RC_FILE"

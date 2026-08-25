@@ -29,16 +29,16 @@ The script automatically takes care of:
 - The **Neovim configuration** including headless plugin synchronization
 - The **xssh script** to `~/.local/bin` (X11 via Xephyr,
   [details in termpp](https://github.com/vhstack/termpp))
-- The **update-vhstack command** to `~/.local/bin` for later updates
+- The **vhstack-update command** to `~/.local/bin` for later updates
 
 **Updating later:** Bring an existing installation up to date with the
-`update-vhstack` command (or [`update.sh`](./update.sh)) — theme, Tmux and
+`vhstack-update` command (or [`update.sh`](./update.sh)) — theme, Tmux and
 Neovim configuration including the Neovim plugins, without touching your
 `~/.bashrc`/`~/.zshrc`. Replaced configurations are saved to
 `~/.vhstack-backup-update-<timestamp>` first:
 
 ```bash
-update-vhstack   # or:
+vhstack-update   # or:
 curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash
 ```
 
@@ -64,7 +64,7 @@ brew install tmux neovim ripgrep llvm               # macOS
 | Tmux | `~/.tmux/`, symlink `~/.tmux.conf` |
 | Clipboard (WSL only) | `%LOCALAPPDATA%\win32yank`, symlink in PATH, `~/.cache/tmuxpp/` |
 | Neovim | `~/.config/nvim/`, plugin data under `~/.local/share/nvim`, `~/.local/state/nvim`, `~/.cache/nvim` |
-| Tools | `~/.local/bin/xssh`, `~/.local/bin/update-vhstack` |
+| Tools | `~/.local/bin/xssh`, `~/.local/bin/vhstack-update` |
 
 `install.sh` is idempotent: running it again refreshes the installation, and anything existing is moved to a new backup directory first.
 

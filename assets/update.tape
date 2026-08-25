@@ -1,4 +1,4 @@
-# vhstack — „update-vhstack“ (Bonus-GIF)
+# vhstack — „vhstack-update“ (Bonus-GIF)
 # Ein Befehl bringt alles auf Stand — mit alt→neu-Report.
 
 Output update.gif
@@ -31,9 +31,9 @@ Enter
 Sleep 500ms
 Show
 
-# ── Ein Befehl: update-vhstack ──
+# ── Ein Befehl: vhstack-update ──
 Sleep 2s
-Type "update-vhstack"
+Type "vhstack-update"
 Sleep 600ms
 Enter
 Wait+Screen@120s /done in \d+s/

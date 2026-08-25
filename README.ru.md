@@ -43,7 +43,7 @@ curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bas
 Позже одна команда обновляет всё до актуального состояния:
 
 ```bash
-update-vhstack
+vhstack-update
 ```
 
 ## 🔧 Мои проекты

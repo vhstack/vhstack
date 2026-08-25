@@ -19,8 +19,8 @@
 #
 #   curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh | bash
 #
-# install.sh also installs this script as ~/.local/bin/update-vhstack,
-# so after the initial install you can simply run: update-vhstack
+# install.sh also installs this script as ~/.local/bin/vhstack-update,
+# so after the initial install you can simply run: vhstack-update
 
 set -euo pipefail
 
@@ -242,10 +242,10 @@ main() {
 
   # fetch() replaces via temp file + mv (atomic), so a possibly running
   # copy of this very script is never truncated in place.
-  if [ -e "$HOME/.local/bin/update-vhstack" ]; then
+  if [ -e "$HOME/.local/bin/vhstack-update" ]; then
     if fetch https://raw.githubusercontent.com/vhstack/vhstack/main/update.sh \
-         "$HOME/.local/bin/update-vhstack"; then
-      chmod +x "$HOME/.local/bin/update-vhstack"
+         "$HOME/.local/bin/vhstack-update"; then
+      chmod +x "$HOME/.local/bin/vhstack-update"
     fi
   fi
 

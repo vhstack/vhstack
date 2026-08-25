@@ -7,7 +7,7 @@
 #   - Neovim configuration (~/.config/nvim) and its plugin data
 #   - vhstack prompt theme and the init lines in ~/.bashrc / ~/.zshrc
 #     (the oh-my-posh binary itself is kept)
-#   - xssh and update-vhstack from ~/.local/bin
+#   - xssh and vhstack-update from ~/.local/bin
 #
 # The backup directories (~/.vhstack-backup-*) are kept untouched — they
 # hold your configurations from before the installation. Restore by hand
@@ -139,9 +139,9 @@ main() {
     have_xssh=yes; found=yes
     echo "    - xssh (~/.local/bin/xssh)"
   fi
-  if [ -e "$HOME/.local/bin/update-vhstack" ]; then
+  if [ -e "$HOME/.local/bin/vhstack-update" ] || [ -e "$HOME/.local/bin/update-vhstack" ]; then
     have_update=yes; found=yes
-    echo "    - update-vhstack (~/.local/bin/update-vhstack)"
+    echo "    - vhstack-update (~/.local/bin/vhstack-update)"
   fi
 
   if [ "$found" = no ]; then
@@ -281,8 +281,8 @@ main() {
   fi
   if [ "$have_update" = yes ]; then
     label "update"
-    rm -f "$HOME/.local/bin/update-vhstack"
-    ok "removed: ~/.local/bin/update-vhstack"
+    rm -f "$HOME/.local/bin/vhstack-update" "$HOME/.local/bin/update-vhstack"
+    ok "removed: ~/.local/bin/vhstack-update"
   fi
 
   # Das Versionsmanifest von install.sh/update.sh mit abraeumen -- sonst
