@@ -50,20 +50,18 @@ if [ ! -e "$DEMO/fakehome/.tmux.conf" ] && [ ! -e install.tape ]; then
     'curl -sL https://raw.githubusercontent.com/vhstack/vhstack/main/install.sh | bash' >/dev/null
 fi
 
-# --- orbit (C++-Demo-Projekt aus nvimpp) für termpp/tmuxpp/nvimpp-Tapes ---
+# --- stacktop (Demo-App auf vlib2-Basis) für termpp/tmuxpp/nvimpp-Tapes ---
+# Beide liegen privat auf der Render-Maschine; ohne sie sind diese Tapes
+# nicht reproduzierbar (die GIFs bleiben davon unberührt).
 if [ -e prompt.tape ] || [ -e sessions.tape ] || [ -e ide.tape ]; then
-  ORBIT="${VHS_ORBIT_DIR:-}"
-  [ -n "$ORBIT" ] || { [ -d demo/orbit ] && ORBIT="$PWD/demo/orbit"; } || true
-  [ -n "$ORBIT" ] || { [ -d ../../nvimpp/assets/demo/orbit ] && ORBIT="$(cd ../../nvimpp/assets/demo/orbit && pwd)"; } || true
-  if [ -z "$ORBIT" ]; then
-    [ -d "$DEMO/nvimpp-src" ] || git clone -q --depth 1 https://github.com/vhstack/nvimpp "$DEMO/nvimpp-src"
-    ORBIT="$DEMO/nvimpp-src/assets/demo/orbit"
-  fi
-  if [ ! -x "$ORBIT/build/orbit" ]; then
-    echo "record: baue orbit"
-    cmake -S "$ORBIT" -B "$ORBIT/build" >/dev/null && cmake --build "$ORBIT/build" >/dev/null
-  fi
-  export VHS_ORBIT_DIR="$ORBIT"
+  : "${VHS_APP_DIR:=$HOME/projekte/stacktop}"
+  [ -d "$VHS_APP_DIR/src" ] || { echo "record: $VHS_APP_DIR fehlt (stacktop-Demo-App)"; exit 1; }
+  export VHS_APP_DIR
+fi
+if [ -e sessions.tape ] || [ -e ide.tape ]; then
+  : "${VHS_VLIB_DIR:=$HOME/projekte/vlib2}"
+  [ -d "$VHS_VLIB_DIR/include" ] && [ -f "$VHS_VLIB_DIR/lib/vlib2.a" ] || { echo "record: $VHS_VLIB_DIR fehlt (vlib2 mit lib/vlib2.a)"; exit 1; }
+  export VHS_VLIB_DIR
 fi
 
 # --- Rendern ---
