@@ -5,7 +5,11 @@
 </p>
 
 <p align="center">
-  <img src="assets/vhstack.svg" width="160" alt="vhstack" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/title-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/title-light.svg">
+    <img src="assets/title-dark.svg" width="300" height="64" alt="vhstack" />
+  </picture>
 </p>
 
 # nvimpp, tmuxpp, termpp – dein Terminal, dein Code, dein Stil
