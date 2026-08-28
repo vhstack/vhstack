@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from scipy.spatial import Delaunay
 rng = np.random.default_rng(7)
@@ -77,5 +78,6 @@ for k in range(len(FP)):
 svg.append('</g></g>')
 svg.append(f'<circle cx="{C}" cy="{C}" r="{R}" fill="url(#rim)"/>')
 svg.append('</svg>')
-open('vhstack-logo.svg','w').write("\n".join(svg))
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vhstack.svg')
+open(OUT, 'w').write("\n".join(svg))
 print("written", len("\n".join(svg))//1024, "KB")
