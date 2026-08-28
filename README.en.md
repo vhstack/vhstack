@@ -4,6 +4,10 @@
   <a href="README.ru.md"><img src="assets/flag-ru.png" width="16" height="12" alt="Русский" title="Переключиться на русскую версию" /></a>
 </p>
 
+<p align="center">
+  <img src="assets/vhstack.svg" width="160" alt="vhstack" />
+</p>
+
 # nvimpp, tmuxpp, termpp – your terminal, your code, your style
 
 [![Version](https://img.shields.io/github/v/tag/vhstack/vhstack?label=version&sort=semver&color=8aadf4)](https://github.com/vhstack/vhstack/tags)
@@ -48,15 +52,15 @@ vhstack-update
 
 ## 🔧 My Projects
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
+### <img src="assets/vhstack.svg" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [nvimpp](https://github.com/vhstack/nvimpp)
 **Neovim as a C/C++ IDE:**  
 clangd, Telescope, Treesitter, Neo-tree and Outline, lazy-loaded and ready in under 100 ms.
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
+### <img src="assets/vhstack.svg" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [tmuxpp](https://github.com/vhstack/tmuxpp)
 **tmux that just works:**  
 Copy and paste with the mouse straight into the system clipboard, even over SSH via OSC 52. Sensible keys, three themes, no plugin manager.
 
-### <img src="assets/vhstack.png" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp)
+### <img src="assets/vhstack.svg" width="20" height="20" style="vertical-align:middle; margin-right: 6px;" /> [termpp](https://github.com/vhstack/termpp)
 **Terminal, Nerd Font and prompt:**  
 Windows Terminal with Catppuccin and Cascadia Code NF. The Oh My Posh prompt shows git status, errors and run time, and true color reaches all the way to the server.
 
