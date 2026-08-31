@@ -86,7 +86,7 @@ main() {
   ok()      { printf '%s%s%s %s\n' "$GRN" "$CHK" "$RST" "$1"; }
   warn()    { printf '%s%s%s %s\n' "$PCH" "$WRN" "$RST" "$1"; }
   showlog() { if [ -s "$LOG" ]; then sed "s/^/                $DIM/;s/\$/$RST/" "$LOG"; fi; }
-  fail()    { printf '%s%s%s %s\n' "$RED" "$FLD" "$RST" "$1"; showlog; exit 1; }
+  fail()    { printf '%s%s%s %s\n' "$RED" "$FLD" "$RST" "$1"; showlog; printf '\n'; exit 1; }
   # Gedimmte Folgezeile, buendig unter der Nachrichtenspalte (16 = 2 Rand
   # + 10 Label + 1 + 2 Statusmarke + 1)
   extra()   { printf '                %s%s%s\n' "$DIM" "$1" "$RST"; }
@@ -333,6 +333,7 @@ main() {
   step "source ${RC_FILE/#$HOME/\~}" "reload your shell (or start a new $SHELL_NAME session)"
   step "tmux" "prefix = Ctrl+A"
   step "nvim" ":MasonInstall clangd cmake-language-server for C/C++ LSP"
+  printf '\n'
 }
 
 main "$@"
