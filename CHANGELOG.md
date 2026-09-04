@@ -8,6 +8,30 @@ Für eine Konfigurationssammlung gilt:
 - **minor** — neue Funktionen, abwärtskompatibel
 - **patch** — Fehlerbehebungen, Feinschliff
 
+## [1.0.2] — 2026-09-04
+
+Wartungsrelease ohne funktionale Änderung an Installation oder Update.
+
+### Komponenten zum Zeitpunkt des Release
+
+| Komponente | Version |
+| ---------- | ------- |
+| nvimpp     | v1.5.3  |
+| tmuxpp     | v1.3.1  |
+| termpp     | v1.4.0  |
+
+### Geändert
+
+- `install.sh`: Leerzeile nach der Abschlussübersicht und nach einer
+  Fehlermeldung, damit der Prompt nicht direkt an der Ausgabe klebt
+- Dokumentation: neues vhstack-Logo als SVG mit Titelgrafik für hellen und
+  dunklen Modus (`assets/title-*.svg`), Generator `assets/gen_vhstack_logo.py`;
+  Projektkarten der drei Komponenten neu formuliert, einheitlicher Footer,
+  Badge-Farben angepasst — in allen drei README-Sprachen
+- `LICENSE` (MIT) ergänzt
+- `assets/record.sh`: Demo-Aufnahmen nutzen `vhstack-update` und die
+  Demo-App stacktop statt orbit (`VHS_APP_DIR`, `VHS_VLIB_DIR`)
+
 ## [1.0.1] — 2026-08-25
 
 - Update-Befehl von `update-vhstack` in `vhstack-update` umbenannt
@@ -52,4 +76,6 @@ Zeitpunkt des Release, sie legt ihn nicht fest.
 
 Vor diesem Tag wurde nicht versioniert.
 
+[1.0.2]: https://github.com/vhstack/vhstack/releases/tag/v1.0.2
+[1.0.1]: https://github.com/vhstack/vhstack/releases/tag/v1.0.1
 [1.0.0]: https://github.com/vhstack/vhstack/releases/tag/v1.0.0
