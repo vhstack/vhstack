@@ -8,6 +8,22 @@ Für eine Konfigurationssammlung gilt:
 - **minor** — neue Funktionen, abwärtskompatibel
 - **patch** — Fehlerbehebungen, Feinschliff
 
+## [1.0.3] — 2026-11-12
+
+### Komponenten zum Zeitpunkt des Release
+
+| Komponente | Version |
+| ---------- | ------- |
+| nvimpp     | v1.5.5  |
+| tmuxpp     | v1.3.2  |
+| termpp     | v1.6.0  |
+
+### Geändert
+
+- `install.sh` und `vhstack-update` räumen alte Backups auf: Das älteste
+  (Stand vor vhstack) und die drei neuesten `~/.vhstack-backup-*` bleiben,
+  ältere werden gelöscht.
+
 ## [1.0.2] — 2026-09-04
 
 Wartungsrelease ohne funktionale Änderung an Installation oder Update.
@@ -76,6 +92,7 @@ Zeitpunkt des Release, sie legt ihn nicht fest.
 
 Vor diesem Tag wurde nicht versioniert.
 
+[1.0.3]: https://github.com/vhstack/vhstack/releases/tag/v1.0.3
 [1.0.2]: https://github.com/vhstack/vhstack/releases/tag/v1.0.2
 [1.0.1]: https://github.com/vhstack/vhstack/releases/tag/v1.0.1
 [1.0.0]: https://github.com/vhstack/vhstack/releases/tag/v1.0.0

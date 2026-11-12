@@ -12,7 +12,8 @@
 #      the latest configurations without a full reinstall
 #
 # Existing configurations are moved to a timestamped backup directory
-# (~/.vhstack-backup-<timestamp>) before anything is overwritten.
+# (~/.vhstack-backup-<timestamp>) before anything is overwritten. Only the
+# oldest and the three most recent backups are kept; older ones are deleted.
 #
 # Quick install (bash or zsh):
 #
@@ -99,6 +100,23 @@ main() {
     local rel="${path#"$HOME"/}"
     mkdir -p "$BACKUP_DIR/$(dirname "$rel")"
     mv "$path" "$BACKUP_DIR/$rel"
+  }
+
+  # Alte Backups ausduennen: das aelteste (Stand vor vhstack) und die drei
+  # neuesten bleiben. Geloescht wird nur, was auf unseren Zeitstempel endet
+  # (-YYYYMMDD-HHMMSS) -- von Hand umbenannte Verzeichnisse bleiben liegen.
+  PRUNED=0
+  prune_backups() {
+    local b n all=()
+    while IFS= read -r b; do all+=("$b"); done < <(
+      for b in "$HOME"/.vhstack-backup-*; do
+        case "${b##*/}" in
+          *-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9])
+            if [ -d "$b" ] && [ ! -L "$b" ]; then printf '%s %s\n' "${b: -15}" "$b"; fi ;;
+        esac
+      done | sort | cut -d' ' -f2-)
+    n=$(( ${#all[@]} - 4 ))
+    if [ "$n" -gt 0 ]; then rm -rf "${all[@]:1:n}"; PRUNED=$n; fi
   }
 
   # Kopf wie auf der Landing-Page: Name mit Block-Cursor, Quelle rechtsbuendig
@@ -288,8 +306,10 @@ main() {
     echo "INSTALLED=$(date +%Y-%m-%dT%H:%M:%S%z)"
   } >"$STATE_DIR/versions"
 
+  prune_backups
   label "backup"
   ok "${BACKUP_DIR/#$HOME/\~}"
+  if [ "$PRUNED" -gt 0 ]; then extra "$PRUNED older backups removed $SEP first and last three kept"; fi
 
   # Hinweise als eigene Zeilen: nur zeigen, was wirklich ansteht. Fehlt
   # ~/.local/bin im PATH, wird es idempotent in die rc-Datei eingetragen

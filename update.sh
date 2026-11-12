@@ -13,7 +13,8 @@
 # ~/.local/share/nvim) is kept; only the configurations are replaced.
 # The replaced configurations are copied to a timestamped backup
 # directory (~/.vhstack-backup-update-<timestamp>) first, in case you
-# made local changes.
+# made local changes. Only the oldest and the three most recent backups
+# (~/.vhstack-backup-*) are kept; older ones are deleted.
 #
 # Quick update (bash or zsh):
 #
@@ -107,6 +108,23 @@ main() {
     local rel="${path#"$HOME"/}"
     mkdir -p "$BACKUP_DIR/$(dirname "$rel")"
     cp -a "$path" "$BACKUP_DIR/$rel"
+  }
+
+  # Alte Backups ausduennen: das aelteste (Stand vor vhstack) und die drei
+  # neuesten bleiben. Geloescht wird nur, was auf unseren Zeitstempel endet
+  # (-YYYYMMDD-HHMMSS) -- von Hand umbenannte Verzeichnisse bleiben liegen.
+  PRUNED=0
+  prune_backups() {
+    local b n all=()
+    while IFS= read -r b; do all+=("$b"); done < <(
+      for b in "$HOME"/.vhstack-backup-*; do
+        case "${b##*/}" in
+          *-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9])
+            if [ -d "$b" ] && [ ! -L "$b" ]; then printf '%s %s\n' "${b: -15}" "$b"; fi ;;
+        esac
+      done | sort | cut -d' ' -f2-)
+    n=$(( ${#all[@]} - 4 ))
+    if [ "$n" -gt 0 ]; then rm -rf "${all[@]:1:n}"; PRUNED=$n; fi
   }
 
   # Kopf wie auf der Landing-Page: Name mit Block-Cursor, Quelle rechtsbuendig
@@ -296,8 +314,10 @@ main() {
   # --- Summary ------------------------------------------------------------------
 
   if [ -d "$BACKUP_DIR" ]; then
+    prune_backups
     label "backup"
     ok "${BACKUP_DIR/#$HOME/\~}"
+    if [ "$PRUNED" -gt 0 ]; then extra "$PRUNED older backups removed $SEP first and last three kept"; fi
   fi
 
   printf '\n  %s%s%s\n' "$DIM" "$RULE" "$RST"

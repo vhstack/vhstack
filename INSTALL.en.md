@@ -66,7 +66,7 @@ brew install tmux neovim ripgrep llvm               # macOS
 | Neovim | `~/.config/nvim/`, plugin data under `~/.local/share/nvim`, `~/.local/state/nvim`, `~/.cache/nvim` |
 | Tools | `~/.local/bin/xssh`, `~/.local/bin/vhstack-update` |
 
-`install.sh` is idempotent: running it again refreshes the installation, and anything existing is moved to a new backup directory first.
+`install.sh` is idempotent: running it again refreshes the installation, and anything existing is moved to a new backup directory first. To keep backups from piling up, `install.sh` and `vhstack-update` keep only the oldest one (the state before vhstack) and the three most recent; older ones are deleted.
 
 ## Uninstall
 
